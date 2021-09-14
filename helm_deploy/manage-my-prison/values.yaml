@@ -42,11 +42,10 @@ generic-service:
     TOKEN_VERIFICATION_ENABLED: "true"
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
-  # namespace_secrets:
-  #   [name of kubernetes secret]:
-  #     [name of environment variable as seen by app]: [key of kubernetes secret to load]
-
   namespace_secrets:
+    elasticache-redis:
+      REDIS_HOST: "primary_endpoint_address"
+      REDIS_AUTH_TOKEN: "auth_token"
     manage-my-prison:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
       API_CLIENT_ID: "API_CLIENT_ID"
@@ -54,9 +53,11 @@ generic-service:
       SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
       SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
       SESSION_SECRET: "SESSION_SECRET"
-    elasticache-redis:
-      REDIS_HOST: "primary_endpoint_address"
-      REDIS_AUTH_TOKEN: "auth_token"
+    s3:
+      S3_BUCKET_NAME: bucket_name
+      S3_ACCESS_KEY_ID: access_key_id
+      S3_SECRET_ACCESS_KEY: secret_access_key
+      S3_BUCKET_ARN: bucket_arn
 
   allowlist:
     digital-studio: "217.33.148.210/32"
