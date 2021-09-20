@@ -10,8 +10,9 @@
 
     <h2 class="govuk-heading-m">Vega test 2: Data was injected into visualisation</h2>
     <ul class="govuk-list govuk-list--bullet">
-      <li>Both the visualisation specification and the data read from S3.</li>
-      <li>Data is passed to the visualisation for rendering.</li>
+      <li>Visualisation specification read from S3.</li>
+      <li>Data read from S3 using S3 select for filtering.</li>
+      <li>Filtered data is passed to the visualisation for rendering.</li>
     </ul>
     {{ vis2 | safe }}
 
