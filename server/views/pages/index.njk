@@ -8,7 +8,19 @@
     <h1>This site is under construction...</h1>
     <p>Please check back later when there is content to view.</p>
 
-    {{ visSVG | safe }}
+    <h2 class="govuk-heading-m">Vega test 2: Data was injected into visualisation</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Both the visualisation specification and the data read from S3.</li>
+      <li>Data is passed to the visualisation for rendering.</li>
+    </ul>
+    {{ vis2 | safe }}
+
+    <h2 class="govuk-heading-m">Vega test 1: Render straight from S3</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Visualisation specification read from S3</li>
+      <li>Data was embedded into the visualisation file.</li>
+    </ul>
+    {{ vis1 | safe }}
   </main>
 
 {% endblock %}
