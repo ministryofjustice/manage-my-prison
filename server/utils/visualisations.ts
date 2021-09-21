@@ -65,6 +65,14 @@ export async function getViz2(s3Client: S3): Promise<string> {
     {
       name: 'table',
       values: data,
+      // NOTE: Vega also has ways to transform data, e.g. to filter it
+      // SEE: https://vega.github.io/vega/docs/transforms/
+      // transform: [
+      //   {
+      //     type: 'filter',
+      //     expr: 'datum.amount > 20',
+      //   },
+      // ],
     },
   ]
 
