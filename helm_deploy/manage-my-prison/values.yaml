@@ -25,6 +25,8 @@ generic-service:
     httpGet:
       path: /ping
 
+  serviceAccountName: pod-internal
+
   # Environment variables to load into the deployment
   env:
     NODE_ENV: "production"
