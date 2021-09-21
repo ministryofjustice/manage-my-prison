@@ -5,7 +5,7 @@ generic-service:
   ingress:
     host: manage-my-prison-dev.prison.service.justice.gov.uk
     annotations:
-      external-dns.alpha.kubernetes.io/set-identifier: manage-my-prison-dev-green
+      external-dns.alpha.kubernetes.io/set-identifier: manage-my-prison-manage-my-prison-dev-green
 
   env:
     INGRESS_URL: "https://manage-my-prison-dev.prison.service.justice.gov.uk"
