@@ -1,6 +1,4 @@
 ---
-# Per environment values which override defaults in manage-my-prison/values.yaml
-
 generic-service:
   replicaCount: 2
 
@@ -11,6 +9,3 @@ generic-service:
     INGRESS_URL: "https://manage-my-prison-dev.prison.service.justice.gov.uk"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
-
-generic-prometheus-alerts:
-  alertSeverity: digital-prison-service-dev
