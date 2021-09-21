@@ -14,6 +14,8 @@ generic-service:
     host: app-hostname.local    # override per environment
     tlsSecretName: manage-my-prison-cert
     path: /
+    annotations:
+      external-dns.alpha.kubernetes.io/aws-weight: "0"
 
   livenessProbe:
     httpGet:
