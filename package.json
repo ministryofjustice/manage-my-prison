@@ -1,9 +1,16 @@
 {
   "name": "manage-my-prison",
   "version": "0.0.1",
+  "private": true,
   "description": "Manage My Prison",
   "repository": "git@github.com:ministryofjustice/manage-my-prison.git",
   "license": "MIT",
+  "homepage": "https://github.com/ministryofjustice/manage-my-prison",
+  "author": {
+    "name": "HMPPS Digital (MoJ Digital & Technology)",
+    "email": "info@digital.justice.gov.uk",
+    "url": "https://mojdigital.blog.gov.uk/"
+  },
   "scripts": {
     "prepare": "husky install",
     "copy-views": "cp -R server/views dist/server/",
