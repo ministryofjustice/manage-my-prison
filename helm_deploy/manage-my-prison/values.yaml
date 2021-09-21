@@ -15,7 +15,7 @@ generic-service:
     tlsSecretName: manage-my-prison-cert
     path: /
     annotations:
-      external-dns.alpha.kubernetes.io/aws-weight: "0"
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   livenessProbe:
     httpGet:
