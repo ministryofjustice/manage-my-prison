@@ -6,6 +6,7 @@ import * as vegaLite from 'vega-lite'
 
 import { StringDecoder } from 'string_decoder'
 import config from '../config'
+import logger from '../../logger'
 
 /**
  * Gets an example visualisation from S3 and returns the rendered SVG.
@@ -47,18 +48,18 @@ export async function getViz2(s3Client: S3): Promise<string> {
 
   // DEBUG
   const allData = await getData(s3Client, 'sandbox/viz2-data.csv')
-  console.dir('all data in CSV')
-  console.dir(allData)
+  logger.debug('all data in CSV:\n', allData)
 
+  // const s3SelectQuery = `SELECT category, amount FROM s3object`
+  // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE category IN ('A', 'B', 'I', 'L')`
+  // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE category IN ('Z')`
+  const s3SelectQuery = `SELECT category, amount FROM s3object WHERE CAST(amount AS NUMERIC) < 80`
+  // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE amount < 50` // This doesn't work, need CAST
   const s3selectParams: SelectObjectContentCommandInput = {
     Bucket: config.s3.bucket_name,
     Key: 'sandbox/viz2-data.csv',
     ExpressionType: 'SQL',
-    Expression: `SELECT category, amount FROM s3object`,
-    // Expression: `SELECT category, amount FROM s3object WHERE category IN ('A', 'B', 'I', 'L')`,
-    // Expression: `SELECT category, amount FROM s3object WHERE category IN ('Z')`,
-    // Expression: `SELECT category, amount FROM s3object WHERE CAST(amount AS NUMERIC) < 50`,
-    // Expression: `SELECT category, amount FROM s3object WHERE amount < 50`, // This doesn't work, need CAST
+    Expression: s3SelectQuery,
     InputSerialization: {
       CSV: {
         FileHeaderInfo: 'USE',
@@ -72,14 +73,14 @@ export async function getViz2(s3Client: S3): Promise<string> {
       },
     },
   }
+  logger.debug('S3 Select query:\n', s3SelectQuery)
 
   const s3SelectResult = await s3Client.selectObjectContent(s3selectParams)
 
   const readable = Readable.from(s3SelectResult.Payload)
   const data = await getS3selectData(readable)
 
-  console.dir('filtered data')
-  console.dir(data)
+  logger.debug('S3 Select filtered data:\n', data)
 
   spec.data = [
     {
