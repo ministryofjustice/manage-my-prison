@@ -118,7 +118,8 @@
     "passport-oauth2": "^1.6.0",
     "redis": "^3.1.2",
     "superagent": "^6.1.0",
-    "vega": "^5.20.2"
+    "vega": "^5.20.2",
+    "vega-lite": "^5.1.1"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.7",

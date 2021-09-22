@@ -8,6 +8,15 @@
     <h1>This site is under construction...</h1>
     <p>Please check back later when there is content to view.</p>
 
+    <h2 class="govuk-heading-m">Vega test 3: Compile VegaLite spec into a Vega spec</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Uses VegaLite specification instead of Vega specification. VegaLite is an higher level format compared to Vega.</li>
+      <li>Specification is hardcoded (not read from S3 in this example)</li>
+      <li>Data is also embedded into specification (not read from S3 in this example)</li>
+      <li>VegaLite spec is compiled/converted into a Vega spec and then rendered.</li>
+    </ul>
+    {{ vis3 | safe }}
+
     <h2 class="govuk-heading-m">Vega test 2: Data was injected into visualisation</h2>
     <ul class="govuk-list govuk-list--bullet">
       <li>Visualisation specification read from S3.</li>
