@@ -1,5 +1,8 @@
 {% extends "../partials/layout.njk" %}
 
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
 {% set pageTitle = applicationName + " - Behaviour entries" %}
 
 {% block content %}
@@ -7,29 +10,166 @@
   <main class="app-container govuk-body">
     <h1 class="govuk-heading-l">Behaviour entries</h1>
 
-    <h2 class="govuk-heading-m">Vega test 3: Compile VegaLite spec into a Vega spec</h2>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Uses VegaLite specification instead of Vega specification. VegaLite is an higher level format compared to Vega.</li>
-      <li>Specification is hardcoded (not read from S3 in this example)</li>
-      <li>Data is also embedded into specification (not read from S3 in this example)</li>
-      <li>VegaLite spec is compiled/converted into a Vega spec and then rendered.</li>
-    </ul>
-    {{ vis3 | safe }}
+    <div class="govuk-grid-row">
+      {# Positive half #}
+      <div class="govuk-grid-column-one-half" id="summary-positive">
+        <h2 class="govuk-heading-m">Positive 7-day view</h2>
 
-    <h2 class="govuk-heading-m">Vega test 2: Data was injected into visualisation</h2>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Visualisation specification read from S3.</li>
-      <li>Data read from S3 using S3 select for filtering.</li>
-      <li>Filtered data is passed to the visualisation for rendering.</li>
-    </ul>
-    {{ vis2 | safe }}
+        <div class="govuk-grid-column-one-half">
+          <span>XXX</span> Positive entries
+          <br />
+          <span>+X%</span> vs 7 days ago
+        </div>
 
-    <h2 class="govuk-heading-m">Vega test 1: Render straight from S3</h2>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Visualisation specification read from S3</li>
-      <li>Data was embedded into the visualisation file.</li>
-    </ul>
-    {{ vis1 | safe }}
+        <div class="govuk-grid-column-one-half">
+          <span>XX</span> prisoners
+          <br />
+          <span>XX</span> on Basic
+          <br />
+          <span>XX</span> on Standard
+          <br />
+          <span>XX</span> on Enhanced
+        </div>
+      </div>
+
+      {# Negative half #}
+      <div class="govuk-grid-column-one-half" id="summary-negative">
+        <h2 class="govuk-heading-m">Negative 7-day view</h2>
+
+        <div class="govuk-grid-column-one-half">
+          <span>XXX</span> Negative entries
+          <span>+X%</span> vs 7 days ago
+        </div>
+
+        <div class="govuk-grid-column-one-half">
+          <span>XX</span> prisoners
+          <br />
+          <span>XX</span> on Basic
+          <br />
+          <span>XX</span> on Standard
+          <br />
+          <span>XX</span> on Enhanced
+        </div>
+      </div>
+    </div>
+
+    <p class="govuk-body-m govuk-!-margin-bottom-2">Overview</p>
+
+    {% set pastWeekHtml %}
+      <h2 class="govuk-heading-m">Vega test 3: Compile VegaLite spec into a Vega spec</h2>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Uses VegaLite specification instead of Vega specification. VegaLite is an higher level format compared to Vega.</li>
+        <li>Specification is hardcoded (not read from S3 in this example)</li>
+        <li>Data is also embedded into specification (not read from S3 in this example)</li>
+        <li>VegaLite spec is compiled/converted into a Vega spec and then rendered.</li>
+      </ul>
+      {{ vis3 | safe }}
+    {% endset -%}
+
+    {% set last4weeksHtml %}
+      <h2 class="govuk-heading-m">Vega test 2: Data was injected into visualisation</h2>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Visualisation specification read from S3.</li>
+        <li>Data read from S3 using S3 select for filtering.</li>
+        <li>Filtered data is passed to the visualisation for rendering.</li>
+      </ul>
+      {{ vis2 | safe }}
+    {% endset -%}
+
+    {% set last3monthsHtml %}
+      <h2 class="govuk-heading-m">Vega test 1: Render straight from S3</h2>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Visualisation specification read from S3</li>
+        <li>Data was embedded into the visualisation file.</li>
+      </ul>
+      {{ vis1 | safe }}
+    {% endset -%}
+
+    {% set tableViewHtml %}
+      <h2 class="govuk-heading-l">Past day</h2>
+      {{ govukTable({
+        head: [
+          {
+            text: "Case manager"
+          },
+          {
+            text: "Cases opened"
+          },
+          {
+            text: "Cases closed"
+          }
+        ],
+        rows: [
+          [
+            {
+              text: "David Francis"
+            },
+            {
+              text: "3"
+            },
+            {
+              text: "0"
+            }
+          ],
+          [
+            {
+              text: "Paul Farmer"
+            },
+            {
+              text: "1"
+            },
+            {
+              text: "0"
+            }
+          ],
+          [
+            {
+              text: "Rita Patel"
+            },
+            {
+              text: "2"
+            },
+            {
+              text: "0"
+            }
+          ]
+        ]
+      }) }}
+    {% endset -%}
+
+    {{ govukTabs({
+      items: [
+        {
+          label: "Last 7 days",
+          id: "last-7-days",
+          panel: {
+            html: pastWeekHtml
+          }
+        },
+        {
+          label: "Past week",
+          id: "last-4-weeks",
+          panel: {
+            html: last4weeksHtml
+          }
+        },
+        {
+          label: "Last 3 months",
+          id: "last-3-months",
+          panel: {
+            html: last3monthsHtml
+          }
+        },
+        {
+          label: "Table view",
+          id: "table-view",
+          panel: {
+            html: tableViewHtml
+          }
+        }
+      ]
+    }) }}
+
   </main>
 
 {% endblock %}
