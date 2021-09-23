@@ -11,7 +11,7 @@
   <script src="/assets/js/html5shiv-3.7.3.min.js"></script>
   <![endif]-->
 
-  <script src="/assets/js/jquery.min.js"></script> 
+  <script src="/assets/js/jquery.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
           integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
           crossorigin="anonymous"></script>
@@ -25,7 +25,13 @@
   {% include "./header.njk" %}
 {% endblock %}
 
-{% block bodyStart %}
+{% block beforeContent %}
+  {{ govukPhaseBanner({
+    tag: {
+      text: "alpha"
+    },
+    html: 'This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.'
+  }) }}
 {% endblock %}
 
 {% block bodyEnd %}
