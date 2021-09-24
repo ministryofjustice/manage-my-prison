@@ -3,13 +3,13 @@ Template github repo used for new Typescript based projects.
 
 # Instructions
 
-If this is a HMPPS project then the project will be created as part of bootstrapping - 
+If this is a HMPPS project then the project will be created as part of bootstrapping -
 see https://github.com/ministryofjustice/dps-project-bootstrap.
 
-This bootstrap is community managed by the mojdt `#typescript` slack channel. 
+This bootstrap is community managed by the mojdt `#typescript` slack channel.
 Please raise any questions or queries there. Contributions welcome!
 
-Our security policy is located [here](https://github.com/ministryofjustice/hmpps-template-typescript/security/policy). 
+Our security policy is located [here](https://github.com/ministryofjustice/hmpps-template-typescript/security/policy).
 
 More information about the template project including features can be found [here](https://dsdmoj.atlassian.net/wiki/spaces/NDSS/pages/3488677932/Typescript+template+project).
 
@@ -47,28 +47,43 @@ It then performs a search and replace and directory renames so the project is re
 To ensure notifications are routed to the correct slack channels, update the `alerts-slack-channel` and `releases-slack-channel` parameters in `.circle/config.yml` to an appropriate channel.
 
 ## Running the app
-The easiest way to run the app is to use docker compose to create the service and all dependencies. 
+The easiest way to run the app is to use docker compose to create the service and all dependencies.
 
 `docker-compose pull`
 
 `docker-compose up`
 
 ### Dependencies
-The app requires: 
+The app requires:
 * hmpps-auth - for authentication
 * redis - session store and token caching
 
-### Runing the app for development
+### Running the app for development
 
-To start the main services excluding the example typescript template app: 
+To start the main services excluding the example typescript template app:
 
-`docker-compose up`
+`docker-compose up --scale=app=0`
 
 Install dependencies using `npm install`, ensuring you are using >= `Node v14.x`
 
 And then, to build the assets and start the app with nodemon:
 
 `npm run start:dev`
+
+You can authenticate using one of the users in the HMPPS Auth seed file:
+https://github.com/ministryofjustice/hmpps-auth/blob/main/src/main/resources/db/dev/data/nomis/V9_1__user_data.sql
+
+When running the manage-my-prison application using docker-compose a number of local test machine environment
+variables should be set to make use of the local version of HMPPS Auth and Minio S3 mock server.
+
+The minimum defaults are:
+
+`API_CLIENT_ID=manage-my-prison-client`
+`API_CLIENT_SECRET=clientsecret`
+S3_BUCKET_NAME=test-bucket
+S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
+S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
+S3_ENDPOINT=http://localhost:9000`
 
 ### Run linter
 
@@ -77,6 +92,16 @@ And then, to build the assets and start the app with nodemon:
 ### Run tests
 
 `npm run test`
+
+### Accessing the Minio Mock S3 service
+
+When running locally using docker-compose a fake s3 server using Minio (https://github.com/minio/minio)
+will be created with a bucket automatically provisioned and files seeded from data directory of this repository.
+
+To access the minio console and view the buckets and file go to the following address:
+`http://localhost:9001/`
+
+You will be prompted to enter the test minio access key and secret defined in the docker-compose.yml file.
 
 ### Running integration tests
 
@@ -91,7 +116,7 @@ Then run the server in test mode by:
 And then either, run tests in headless mode with:
 
 `npm run int-test`
- 
+
 Or run tests with the cypress UI:
 
 `npm run int-test-ui`
