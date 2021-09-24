@@ -8,6 +8,12 @@ import { StringDecoder } from 'string_decoder'
 import config from '../config'
 import logger from '../../logger'
 
+export const positiveBehaviourColour = '#48659E'
+export const negativeBehaviourColour = '#9FB3DD'
+
+export const totalColour = negativeBehaviourColour
+export const basicLevelColour = positiveBehaviourColour
+
 /**
  * Gets an example visualisation from S3 and returns the rendered SVG.
  *
@@ -50,10 +56,10 @@ export async function getViz2(s3Client: S3): Promise<string> {
   const allData = await getData(s3Client, 'sandbox/viz2-data.csv')
   logger.debug('all data in CSV:\n', allData)
 
-  // const s3SelectQuery = `SELECT category, amount FROM s3object`
+  const s3SelectQuery = `SELECT category, amount FROM s3object`
   // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE category IN ('A', 'B', 'I', 'L')`
   // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE category IN ('Z')`
-  const s3SelectQuery = `SELECT category, amount FROM s3object WHERE CAST(amount AS NUMERIC) < 80`
+  // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE CAST(amount AS NUMERIC) < 80`
   // const s3SelectQuery = `SELECT category, amount FROM s3object WHERE amount < 50` // This doesn't work, need CAST
   const s3selectParams: SelectObjectContentCommandInput = {
     Bucket: config.s3.bucket_name,
@@ -142,6 +148,91 @@ export function getViz3(): Promise<string> {
 
   const view = new vega.View(vega.parse(vegaSpec))
   return view.toSVG()
+}
+
+/**
+ * Percentage of the basic population compared with percentage of the total population
+ * by age group.
+ *
+ * See Miro board, Alpha sprint 4 - chart 1 - expanded
+ *
+ * @returns a Promise<string> with the SVG of the rendered visualisation.
+ */
+export function getVizPopulation(): Promise<string> {
+  const vegaSpecString = `{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+      "values": [
+        {"age_group": "21-24","level":"all","people":0.12},
+        {"age_group": "21-24","level":"basic","people":0.23},
+
+        {"age_group": "25-29","level":"all","people":0.18},
+        {"age_group": "25-29","level":"basic","people":0.26},
+
+        {"age_group": "30-39","level":"all","people":0.32},
+        {"age_group": "30-39","level":"basic","people":0.35},
+
+        {"age_group": "40-49","level":"all","people":0.19},
+        {"age_group": "40-49","level":"basic","people":0.13},
+
+        {"age_group": "50-59","level":"all","people":0.12},
+        {"age_group": "50-59","level":"basic","people":0.04},
+
+        {"age_group": "60","level":"all","people":0.12},
+        {"age_group": "60","level":"basic","people":0.04},
+
+        {"age_group": "60+","level":"all","people":0.07},
+        {"age_group": "60+","level":"basic","people":0.01}
+      ]
+    },
+    "transform": [
+      {"calculate": "datum.level == 'all' ? '% of total population' : '% of basic population'", "as": "level"}
+    ],
+    "mark": "bar",
+    "encoding": {
+      "column": {
+        "field": "age_group",
+        "type": "nominal",
+        "spacing": 10,
+        "header": {"orient": "bottom"},
+        "title": "Age group"
+      },
+      "y": {
+        "field": "people",
+        "aggregate": "sum",
+        "type": "quantitative",
+        "axis": {
+          "grid": false,
+          "values": [0, 0.10, 0.20, 0.30, 0.40],
+          "format": ".0%"
+        },
+        "scale": {
+          "domain": [0, 0.40]
+        },
+        "title": null
+      },
+      "x": {
+        "field": "level",
+        "axis": null,
+        "sort": "descending"
+      },
+      "color": {
+        "field": "level",
+        "scale": {"range": ["${basicLevelColour}", "${totalColour}"]}
+      }
+    },
+    "config": {
+      "view": {"stroke": "transparent"},
+      "axis": {"domainWidth": 1}
+    }
+  }`
+  const vegaLiteSpec: vegaLite.TopLevelSpec = JSON.parse(vegaSpecString)
+
+  // `vega-lite`'s `compile()` converts a Vega-Lite specification into a Vega one
+  const { spec: vegaSpec } = vegaLite.compile(vegaLiteSpec)
+
+  const view = new vega.View(vega.parse(vegaSpec))
+  return view.toSVG(1.5)
 }
 
 async function getData(s3Client: S3, s3key: string): Promise<string> {

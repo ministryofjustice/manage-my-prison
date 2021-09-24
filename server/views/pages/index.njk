@@ -8,27 +8,54 @@
 {% block content %}
 
   <main class="app-container govuk-body">
-    <h1 class="govuk-heading-l">Behaviour entries</h1>
+    <h1 class="govuk-heading-l">Population age</h1>
+
+    {% from "govuk/components/details/macro.njk" import govukDetails %}
 
     <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukDetails({
+          summaryText: "Measuring maturity",
+          html: "Maturity is still developing in people throughout their 20s. These resources can help you identify which prisoners might have low maturity and help support them to manage their emotions:
+    <br><a href='#' class='govuk-link'>Maturity screening tool</a>
+    <br><a href='#' class='govuk-link'>Choices and changes resource pack</a>"
+        }) }}
+
+        <h3 class="govuk-heading-s">Percentage of the basic population compared with percentage of the total population by age group.</h3>
+      </div>
+    </div>
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        {{ visPopulation | safe }}
+      </div>
+    </div>
+
+    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+    <h1 class="govuk-heading-l">Behaviour entries</h1>
+
+    <div class="govuk-grid-row" id="summary">
       {# Positive half #}
       <div class="govuk-grid-column-one-half" id="summary-positive">
         <h2 class="govuk-heading-m">Positive 7-day view</h2>
 
-        <div class="govuk-grid-column-one-half">
-          <span>XXX</span> Positive entries
-          <br />
-          <span>+X%</span> vs 7 days ago
-        </div>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            <span>XXX</span> Positive entries
+            <br />
+            <span>+X%</span> vs 7 days ago
+          </div>
 
-        <div class="govuk-grid-column-one-half">
-          <span>XX</span> prisoners
-          <br />
-          <span>XX</span> on Basic
-          <br />
-          <span>XX</span> on Standard
-          <br />
-          <span>XX</span> on Enhanced
+          <div class="govuk-grid-column-one-half">
+            <span>XX</span> prisoners
+            <br />
+            <span>XX</span> on Basic
+            <br />
+            <span>XX</span> on Standard
+            <br />
+            <span>XX</span> on Enhanced
+          </div>
         </div>
       </div>
 
@@ -36,19 +63,21 @@
       <div class="govuk-grid-column-one-half" id="summary-negative">
         <h2 class="govuk-heading-m">Negative 7-day view</h2>
 
-        <div class="govuk-grid-column-one-half">
-          <span>XXX</span> Negative entries
-          <span>+X%</span> vs 7 days ago
-        </div>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            <span>XXX</span> Negative entries
+            <span>+X%</span> vs 7 days ago
+          </div>
 
-        <div class="govuk-grid-column-one-half">
-          <span>XX</span> prisoners
-          <br />
-          <span>XX</span> on Basic
-          <br />
-          <span>XX</span> on Standard
-          <br />
-          <span>XX</span> on Enhanced
+          <div class="govuk-grid-column-one-half">
+            <span>XX</span> prisoners
+            <br />
+            <span>XX</span> on Basic
+            <br />
+            <span>XX</span> on Standard
+            <br />
+            <span>XX</span> on Enhanced
+          </div>
         </div>
       </div>
     </div>
