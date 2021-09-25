@@ -17,6 +17,17 @@ parameters:
     type: string
     default: 14.17-browsers
 
+executors:
+  integration-tests:
+    docker:
+      - image: hmpps/node_redis
+      - image: minio/minio
+        command: server /data
+        environment:
+          MINIO_ACCESS_KEY: AKIAXXXXXYYYYYZZTEST
+          MINIO_SECRET_KEY: wJalrXUtnFEMIxK7MDENGxbPxRfixxxxxxxxTEST
+    working_directory: ~/app
+
 jobs:
   build:
     executor:
@@ -95,11 +106,9 @@ jobs:
           path: test-results/unit-test-reports.html
 
   integration_test:
-    executor:
-      name: hmpps/node_redis
-      node_tag: << pipeline.parameters.node-version >>
-      redis_tag: buster
+    executor: integration-tests
     steps:
+      - hmpps/install_aws_cli
       - checkout
       - attach_workspace:
           at: ~/app
@@ -113,6 +122,23 @@ jobs:
           name: Run wiremock
           command: java -jar wiremock.jar --port 9091
           background: true
+      - run:
+          name: Wait for docker images to start before running tests
+          command: sleep 10
+      - run:
+          name: configure s3 bucket
+          command: |
+            export AWS_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
+            export AWS_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
+            aws --endpoint-url http://localhost:9000 s3 mb s3://test-bucket
+            aws --endpoint-url http://localhost:9000 s3 sync data s3://test-bucket/sandbox/
+      - run:
+          name: configure app env vars
+          command: |
+            export S3_BUCKET_NAME=test-bucket
+            export S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
+            export S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
+            export S3_ENDPOINT=http://localhost:9000
       - run:
           name: Run the node app.
           command: npm run start-feature
