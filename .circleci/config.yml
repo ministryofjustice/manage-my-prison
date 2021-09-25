@@ -21,6 +21,11 @@ executors:
   integration-tests:
     docker:
       - image: cimg/node:14.15.3-browsers
+        environment:
+          S3_BUCKET_NAME=test-bucket
+          S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
+          S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
+          S3_ENDPOINT=http://localhost:9000
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
@@ -135,13 +140,6 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
             aws --endpoint-url http://localhost:9000 s3 mb s3://test-bucket
             aws --endpoint-url http://localhost:9000 s3 sync data s3://test-bucket/sandbox/
-      - run:
-          name: configure app env vars
-          command: |
-            export S3_BUCKET_NAME=test-bucket
-            export S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
-            export S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
-            export S3_ENDPOINT=http://localhost:9000
       - run:
           name: Run the node app.
           command: npm run start-feature
