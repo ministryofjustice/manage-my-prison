@@ -38,7 +38,7 @@ export default class S3Client {
     return (await getStream.buffer(response.Body as Readable)).toString()
   }
 
-  async selectObjectContent(s3selectParams: SelectObjectContentCommandInput): Promise<any[]> {
+  async selectObjectContent(s3selectParams: SelectObjectContentCommandInput): Promise<unknown[]> {
     const command = new SelectObjectContentCommand(s3selectParams)
     const response = await this.s3.send(command)
 
