@@ -21,11 +21,6 @@ executors:
   integration-tests:
     docker:
       - image: cimg/node:14.15.3-browsers
-        environment:
-          S3_BUCKET_NAME=test-bucket
-          S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
-          S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
-          S3_ENDPOINT=http://localhost:9000
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
