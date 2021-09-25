@@ -70,20 +70,22 @@ And then, to build the assets and start the app with nodemon:
 
 `npm run start:dev`
 
-You can authenticate using one of the users in the HMPPS Auth seed file:
-https://github.com/ministryofjustice/hmpps-auth/blob/main/src/main/resources/db/dev/data/nomis/V9_1__user_data.sql
+You can authenticate against the local HMPPS Auth using the `MMP_USER` user
+with password `password123456`.
 
 When running the manage-my-prison application using docker-compose a number of local test machine environment
 variables should be set to make use of the local version of HMPPS Auth and Minio S3 mock server.
 
 The minimum defaults are:
 
-`API_CLIENT_ID=manage-my-prison-client`
-`API_CLIENT_SECRET=clientsecret`
+```
+API_CLIENT_ID=manage-my-prison-client
+API_CLIENT_SECRET=clientsecret
 S3_BUCKET_NAME=test-bucket
 S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
 S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
-S3_ENDPOINT=http://localhost:9000`
+S3_ENDPOINT=http://localhost:9000
+```
 
 ### Run linter
 
