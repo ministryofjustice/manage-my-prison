@@ -35,12 +35,10 @@ export default {
   https: production,
   staticResourceCacheDuration: 20,
   s3: {
-    bucket_region: 'eu-west-2',
-    bucket_name: get('S3_BUCKET_NAME', 'bucket_name', requiredInProduction),
-    access_key_id: get('S3_ACCESS_KEY_ID', 'access_key_id', requiredInProduction),
-    secret_access_key: get('S3_SECRET_ACCESS_KEY', 'secret_access_key', requiredInProduction),
+    bucket: get('S3_BUCKET_NAME', 'bucket_name', requiredInProduction),
+    accessKeyId: get('S3_ACCESS_KEY_ID', 'access_key_id', requiredInProduction),
+    secretAccessKey: get('S3_SECRET_ACCESS_KEY', 'secret_access_key', requiredInProduction),
     endpoint: get('S3_ENDPOINT', null),
-    bucket_arn: get('S3_BUCKET_ARN', 'bucket_arn', requiredInProduction),
   },
   redis: {
     host: process.env.REDIS_HOST,

@@ -1,30 +1,20 @@
 import type { RequestHandler, Router } from 'express'
-
 import asyncMiddleware from '../middleware/asyncMiddleware'
-import getS3Client from '../utils/s3'
-import { getViz1, getViz2, getViz3, getVizPopulation } from '../utils/visualisations'
+import VisualisationService from '../services/visualisationService'
+import S3Client from '../data/s3Client'
+import config from '../config'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
+  const visualisationService = new VisualisationService(new S3Client(config.s3))
 
   get('/', async (req, res, next) => {
-    const s3Client = getS3Client()
+    const visPopulation = await visualisationService.getVizPopulation()
+    const viz1 = await visualisationService.getViz1()
+    const viz2 = await visualisationService.getViz2()
+    const viz3 = await visualisationService.getViz3()
 
-    const viz1 = await getViz1(s3Client)
-    const viz2 = await getViz2(s3Client)
-    const viz3 = await getViz3()
-    const visPopulation = await getVizPopulation()
-
-    // const svgFile = createWriteStream('/tmp/vega-output.svg')
-    // svgFile.write(viz1)
-
-    res.locals = {
-      visPopulation,
-      vis1: viz1,
-      vis2: viz2,
-      vis3: viz3,
-    }
-    res.render('pages/index')
+    res.render('pages/index', { visPopulation, vis1: viz1, vis2: viz2, vis3: viz3 })
   })
 
   return router

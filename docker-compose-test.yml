@@ -19,5 +19,37 @@ services:
     ports:
       - "9091:8080"
 
+  minio:
+    image: minio/minio
+    command: server --console-address :9001 /data
+    networks:
+      - hmpps_int
+    container_name: aws-s3-mock
+    restart: always
+    environment:
+      - MINIO_ACCESS_KEY=TEST_MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY=TEST_MINIO_SECRET_KEY
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  createbuckets:
+    image: minio/mc
+    networks:
+      - hmpps_int
+    depends_on:
+      - minio
+    volumes:
+      - $PWD/data:/tmp/data
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      /usr/bin/mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY;
+      /usr/bin/mc rm -r --force manage-my-prison/test-bucket;
+      /usr/bin/mc mb manage-my-prison/test-bucket;
+      /usr/bin/mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/;
+      exit 0;
+      "
+
 networks:
   hmpps_int:
