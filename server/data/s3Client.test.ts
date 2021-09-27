@@ -9,11 +9,11 @@ const s3 = {
 }
 
 const getObjectCommand = {
-  GetObjectCommand: jest.fn().mockImplementation(),
+  GetObjectCommand: jest.fn().mockReturnThis(),
 }
 
 const selectObjectContentCommand = {
-  GetObjectCommand: jest.fn().mockImplementation(),
+  GetObjectCommand: jest.fn().mockReturnThis(),
 }
 
 jest.mock('@aws-sdk/client-s3', () => {
