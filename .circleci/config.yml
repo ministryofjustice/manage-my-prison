@@ -27,8 +27,8 @@ executors:
       - image: minio/minio
         command: server /data
         environment:
-          MINIO_ACCESS_KEY: TEST_MINIO_ACCESS_KEY
-          MINIO_SECRET_KEY: TEST_MINIO_SECRET_KEY
+          MINIO_ROOT_USER: TEST_MINIO_ACCESS_KEY
+          MINIO_ROOT_PASSWORD: TEST_MINIO_SECRET_KEY
     working_directory: ~/app
 
 jobs:
