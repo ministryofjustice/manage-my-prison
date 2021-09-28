@@ -53,6 +53,7 @@ generic-service:
       SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
       SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
       SESSION_SECRET: "SESSION_SECRET"
+      SENTRY_DSN: "SENTRY_DSN"
     s3:
       S3_BUCKET_NAME: bucket_name
       S3_ACCESS_KEY_ID: access_key_id
