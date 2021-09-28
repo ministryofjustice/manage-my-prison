@@ -20,7 +20,6 @@ export default function setUpStaticResources(): Router {
     '/node_modules/govuk-frontend',
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
-    '/node_modules/jquery/dist',
   ].forEach(dir => {
     router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
   })
