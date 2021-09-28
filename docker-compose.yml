@@ -32,8 +32,8 @@ services:
     container_name: aws-s3-mock
     restart: always
     environment:
-      - MINIO_ACCESS_KEY=TEST_MINIO_ACCESS_KEY
-      - MINIO_SECRET_KEY=TEST_MINIO_SECRET_KEY
+      - MINIO_ROOT_USER=TEST_MINIO_ACCESS_KEY
+      - MINIO_ROOT_PASSWORD=TEST_MINIO_SECRET_KEY
     ports:
       - "9000:9000"
       - "9001:9001"
