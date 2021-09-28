@@ -44,7 +44,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install Dependencies
+          name: Install dependencies
           command: npm ci --no-audit
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
@@ -52,6 +52,7 @@ jobs:
             - node_modules
             - ~/.cache
       - run:
+          name: Build and record info
           command: |
             npm run build
             DATE=$(date '+%Y-%m-%d')
@@ -79,7 +80,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: install-npm
+          name: Install dependencies
           command: 'npm ci --no-audit'
       - run:
           name: Check version
@@ -101,7 +102,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: unit tests
+          name: Run unit tests
           command: npm run test
       - store_test_results:
           path: test_results
@@ -129,7 +130,7 @@ jobs:
           name: Wait for docker images to start before running tests
           command: sleep 10
       - run:
-          name: configure s3 bucket
+          name: Configure s3 bucket
           command: |
             export AWS_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
             export AWS_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
@@ -145,7 +146,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: integration tests
+          name: Run integration tests
           command: npm run int-test
       - store_test_results:
           path: test_results
