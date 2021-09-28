@@ -32,6 +32,7 @@ export interface ApiConfig {
 }
 
 export default {
+  environment: process.env.ENVIRONMENT || 'local',
   https: production,
   staticResourceCacheDuration: 20,
   s3: {
@@ -75,4 +76,7 @@ export default {
     },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
+  sentry: {
+    dsn: get('SENTRY_DSN', null, requiredInProduction),
+  },
 }
