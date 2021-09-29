@@ -1,4 +1,5 @@
-import express, { Router } from 'express'
+import crypto from 'crypto'
+import express, { Request, Response, Router } from 'express'
 import helmet from 'helmet'
 
 export default function setUpWebSecurity(): Router {
@@ -7,15 +8,20 @@ export default function setUpWebSecurity(): Router {
   // Secure code best practice - see:
   // 1. https://expressjs.com/en/advanced/best-practice-security.html,
   // 2. https://www.npmjs.com/package/helmet
+
+  router.use((req, res, next) => {
+    res.locals.cspNonce = crypto.randomBytes(16).toString('hex')
+    next()
+  })
   router.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          // Hash allows inline script pulled in from https://github.com/alphagov/govuk-frontend/blob/master/src/govuk/template.njk
-          scriptSrc: ["'self'", "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"],
-          styleSrc: ["'self'"],
           fontSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:'],
+          scriptSrc: ["'self'", (req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
+          styleSrc: ["'self'"],
         },
       },
     })
