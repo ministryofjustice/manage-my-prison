@@ -20,6 +20,8 @@ generic-service:
     path: /
     annotations:
       external-dns.alpha.kubernetes.io/aws-weight: "100"
+      nginx.ingress.kubernetes.io/custom-http-errors: 403,418,503
+      nginx.ingress.kubernetes.io/default-backend: default-backend
       nginx.ingress.kubernetes.io/server-snippet: |
         more_set_headers "Server: manage-my-prison";
         more_set_headers "Permissions-Policy: interest-cohort=()"
