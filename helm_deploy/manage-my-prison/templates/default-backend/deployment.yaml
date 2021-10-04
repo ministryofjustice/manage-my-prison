@@ -22,6 +22,10 @@ spec:
       containers:
         - name: default-backend
           {{- $ecrSecret := (lookup "v1" "Secret" .Values.ecrSecretNamespace .Values.ecrSecretName) -}}
+          {{/* lookup is not available in dry-run or templating mode so pretend that the secret would return "ecr" */}}
+          {{- if (not (hasKey $ecrSecret "data")) }}
+          {{- $_ := set $ecrSecret "data" (dict "repo_url" (b64enc "ecr")) }}
+          {{- end }}
           image: {{ $ecrSecret.data.repo_url | b64dec }}:default-backend
           imagePullPolicy: Always # because the tag is not updated if the image changes
           ports:

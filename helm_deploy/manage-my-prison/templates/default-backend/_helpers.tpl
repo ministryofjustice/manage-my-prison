@@ -2,7 +2,7 @@
 {{- define "default-backend.labels" -}}
 {{ include "default-backend.selector-labels" . }}
 helm.sh/chart: {{ include "manage-my-prison.chart" . }}
-{{- if .Values.image.tag }}
+{{- if (.Values.image | default dict).tag }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
