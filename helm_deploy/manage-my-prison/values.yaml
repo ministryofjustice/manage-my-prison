@@ -3,6 +3,8 @@
 ecrSecretNamespace: manage-my-prison-dev
 ecrSecretName: ecr-repo-manage-my-prison-dev
 
+maintenanceMode: false  # when true, `generic-service.service.enabled` must be set to false
+
 generic-service:
   nameOverride: manage-my-prison
 
@@ -12,6 +14,9 @@ generic-service:
     repository: quay.io/hmpps/manage-my-prison
     tag: app_version    # override at deployment time
     port: 3000
+
+  service:
+    enabled: true
 
   ingress:
     enabled: true
