@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-backend
+  labels:
+    {{- include "default-backend.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "default-backend.selector-labels" . | nindent 4 }}
+  ports:
+    - port: 80
+      targetPort: errors
+      protocol: TCP
+      name: errors
+    - port: 81
+      targetPort: maintenance
+      protocol: TCP
+      name: maintenance

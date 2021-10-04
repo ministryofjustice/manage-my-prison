@@ -1,4 +1,8 @@
 ---
+# used by templates to lookup the ECR secret and thence the ECR repo url
+ecrSecretNamespace: manage-my-prison-dev
+ecrSecretName: ecr-repo-manage-my-prison-dev
+
 generic-service:
   nameOverride: manage-my-prison
 
