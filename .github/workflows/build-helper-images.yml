@@ -1,0 +1,65 @@
+name: Build helper images
+on:
+  push:
+    # rebuild when some helper image changes on main branch
+    branches:
+      - main
+    paths:
+      - 'infrastructure/helper-images/**'
+  schedule:
+    # schedule rebuild at 12 on sundays
+    - cron: '0 12 * * 0'
+  workflow_dispatch:
+    # allow manual trigger from github
+env:
+  AWS_DEFAULT_REGION: eu-west-2
+  AWS_PAGER: ''
+  # ECR name and url are not actually secret
+  ECR_NAME: ${{ secrets.ECR_NAME }}
+  ECR_URL: ${{ secrets.ECR_URL }}
+jobs:
+  build-helper-images:
+    name: Build helper images
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Log into ECR
+        run: |
+          echo "→ Logging into ECR"
+          aws ecr get-login-password | docker login --username AWS --password-stdin "$ECR_URL"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+      - name: Build helper images and push to ECR
+        run: |
+          cd infrastructure/helper-images
+          for dockerfile in $(find . -name Dockerfile)
+          do
+            pushd .
+            imagePath=$(dirname "$dockerfile")
+            cd "$imagePath" || { echo "Cannot cd to where $dockerfile is!" ; exit 1; }
+            imageName=${PWD##*/}
+            fullImageTag="$ECR_URL":"$imageName"
+            echo "→ Building $imageName"
+            docker build --tag "$imageName" .
+            echo "→ Tagging $imageName for ECR"
+            docker tag "$imageName" "$fullImageTag"
+            echo "→ Pushing $fullImageTag to ECR"
+            docker push "$fullImageTag"
+            popd || { echo "Cannot cd to helper-images!" ; exit 1; }
+          done
+      - name: Clean untagged images from ECR
+        run: |
+          imagesToDelete=$(aws ecr list-images --repository-name "$ECR_NAME" --filter tagStatus=UNTAGGED --query 'imageIds[*]' --output json)
+          if [[ "$imagesToDelete" != '[]' ]]; then
+            echo "→ Deleting untagged images"
+            aws ecr batch-delete-image --repository-name "$ECR_NAME" --image-ids "$imagesToDelete"
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+      - name: Log out of ECR
+        run: |
+          echo "→ Logging out of ECR"
+          docker logout "$ECR_URL"

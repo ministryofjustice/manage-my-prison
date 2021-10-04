@@ -1,6 +1,8 @@
 Helper images
 =============
 
+Subfolders here with Dockerfiles are automatically built by Github Actions and pushed into ECR.
+
 - `default-backend`: This image serves simple, static and fully self-contained error and maintenance pages.
   Its primary use is as the default backend for the application’s kubernetes ingress to respond in case particular
   HTTP error codes are produced by the application/ingress. For example, if the connecting client is forbidden due
