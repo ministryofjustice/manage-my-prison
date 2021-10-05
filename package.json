@@ -109,7 +109,7 @@
     "express-request-id": "^1.4.1",
     "express-session": "^1.17.2",
     "get-stream": "^6.0.1",
-    "govuk-frontend": "^3.13.1",
+    "govuk-frontend": "^3.14.0",
     "helmet": "^4.6.0",
     "http-errors": "^1.8.0",
     "jquery": "^3.6.0",
