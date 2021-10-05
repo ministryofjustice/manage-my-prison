@@ -1,0 +1,20 @@
+{{- if .Values.maintenanceMode -}}
+{{/*
+Replaces service created by generic-service subchart redirecting all traffic to default backend maintenance page
+*/}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "generic-service.fullname" . }}
+  labels:
+    {{- include "generic-service.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: maintenance
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "default-backend.selector-labels" . | nindent 4 }}
+{{- end }}

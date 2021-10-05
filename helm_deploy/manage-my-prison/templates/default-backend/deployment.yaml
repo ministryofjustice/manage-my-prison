@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-backend
+  labels:
+    {{- include "default-backend.labels" . | nindent 4 }}
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "default-backend.selector-labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "default-backend.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: default-backend
+          {{- $ecrSecret := (lookup "v1" "Secret" .Values.ecrSecretNamespace .Values.ecrSecretName) -}}
+          {{/* lookup is not available in dry-run or templating mode so pretend that the secret would return "ecr" */}}
+          {{- if (not (hasKey $ecrSecret "data")) }}
+          {{- $_ := set $ecrSecret "data" (dict "repo_url" (b64enc "ecr")) }}
+          {{- end }}
+          image: {{ $ecrSecret.data.repo_url | b64dec }}:default-backend
+          imagePullPolicy: Always # because the tag is not updated if the image changes
+          ports:
+            - name: errors
+              containerPort: 3000
+              protocol: TCP
+            - name: maintenance
+              containerPort: 3001
+              protocol: TCP
