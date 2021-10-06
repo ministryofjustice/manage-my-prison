@@ -85,12 +85,12 @@
     <p class="govuk-body-m govuk-!-margin-bottom-2">Overview</p>
 
     {% set pastWeekHtml %}
-      <h2 class="govuk-heading-m">Vega test 3: Compile VegaLite spec into a Vega spec</h2>
+      <h2 class="govuk-heading-m">Vega test 3: Compile Vega-Lite spec into a Vega spec</h2>
       <ul class="govuk-list govuk-list--bullet">
-        <li>Uses VegaLite specification instead of Vega specification. VegaLite is an higher level format compared to Vega.</li>
+        <li>Uses Vega-Lite specification instead of Vega specification. Vega-Lite is an higher level format compared to Vega.</li>
         <li>Specification is hardcoded (not read from S3 in this example)</li>
         <li>Data is also embedded into specification (not read from S3 in this example)</li>
-        <li>VegaLite spec is compiled/converted into a Vega spec and then rendered.</li>
+        <li>Vega-Lite spec is compiled/converted into a Vega spec and then rendered.</li>
       </ul>
       {{ vis3 | safe }}
     {% endset -%}
@@ -114,56 +114,15 @@
       {{ vis1 | safe }}
     {% endset -%}
 
-    {% set tableViewHtml %}
-      <h2 class="govuk-heading-l">Past day</h2>
-      {{ govukTable({
-        head: [
-          {
-            text: "Case manager"
-          },
-          {
-            text: "Cases opened"
-          },
-          {
-            text: "Cases closed"
-          }
-        ],
-        rows: [
-          [
-            {
-              text: "David Francis"
-            },
-            {
-              text: "3"
-            },
-            {
-              text: "0"
-            }
-          ],
-          [
-            {
-              text: "Paul Farmer"
-            },
-            {
-              text: "1"
-            },
-            {
-              text: "0"
-            }
-          ],
-          [
-            {
-              text: "Rita Patel"
-            },
-            {
-              text: "2"
-            },
-            {
-              text: "0"
-            }
-          ]
-        ]
-      }) }}
+    {% set interactiveVisualisationHtml %}
+      <h2 class="govuk-heading-m">Vega-Lite: Interactive test</h2>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Rendered on the client side (in the user browser)</li>
+        <li>Data in separate URL, currently static file.</li>
+      </ul>
+
+      <div id='interactive-visualisation'>
+      </div>
     {% endset -%}
 
     {{ govukTabs({
@@ -193,7 +152,7 @@
           label: "Table view",
           id: "table-view",
           panel: {
-            html: tableViewHtml
+            html: interactiveVisualisationHtml
           }
         }
       ]
@@ -201,4 +160,102 @@
 
   </main>
 
+{% endblock %}
+
+
+{% block bodyEnd %}
+  {{ super() }}
+
+  <!-- Import Vega & Vega-Lite -->
+  <script src="/assets/js/vega.min.js"></script>
+  <script src="/assets/js/vega-lite.min.js"></script>
+  <!-- Import vega-embed -->
+  <script src="/assets/js/vega-embed.min.js"></script>
+
+  <script nonce='{{ cspNonce }}'>
+    // const dataUrlSeattleWeather = 'https://raw.githubusercontent.com/vega/vega/master/docs/data/seattle-weather.csv';
+    const dataUrlSeattleWeather = 'data/seattle-weather.csv';
+    const spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": "Seattle Weather, 2012-2015",
+      "data": {
+        "url": dataUrlSeattleWeather,
+      },
+      "vconcat": [
+        {
+          "encoding": {
+            "color": {
+              "condition": {
+                "param": "brush",
+                "title": "Weather",
+                "field": "weather",
+                "type": "nominal",
+                "scale": {
+                  "domain": ["sun", "fog", "drizzle", "rain", "snow"],
+                  "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
+                }
+              },
+              "value": "lightgray"
+            },
+            "size": {
+              "title": "Precipitation",
+              "field": "precipitation",
+              "scale": {"domain": [-1, 50]},
+              "type": "quantitative"
+            },
+            "x": {
+              "field": "date",
+              "timeUnit": "monthdate",
+              "title": "Date",
+              "axis": {"format": "%b"}
+            },
+            "y": {
+              "title": "Maximum Daily Temperature (C)",
+              "field": "temp_max",
+              "scale": {"domain": [-5, 40]},
+              "type": "quantitative"
+            }
+          },
+          "width": 600,
+          "height": 300,
+          "mark": "point",
+          "params": [{
+            "name": "brush",
+            "select": {"type": "interval", "encodings": ["x"]}
+          }],
+          "transform": [{"filter": {"param": "click"}}]
+        },
+        {
+          "encoding": {
+            "color": {
+              "condition": {
+                "param": "click",
+                "field": "weather",
+                "scale": {
+                  "domain": ["sun", "fog", "drizzle", "rain", "snow"],
+                  "range": ["#e7ba52", "#a7a7a7", "#aec7e8", "#1f77b4", "#9467bd"]
+                }
+              },
+              "value": "lightgray"
+            },
+            "x": {"aggregate": "count"},
+            "y": {"title": "Weather", "field": "weather"}
+          },
+          "width": 600,
+          "mark": "bar",
+          "params": [{
+            "name": "click",
+            "select": {"type": "point", "encodings": ["color"]}
+          }],
+          "transform": [{"filter": {"param": "brush"}}]
+        }
+      ]
+    };
+
+    console.log(spec);
+
+    vegaEmbed('#interactive-visualisation', spec).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+    }).catch(console.error);
+  </script>
 {% endblock %}

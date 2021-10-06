@@ -148,79 +148,133 @@ export default class VisualisationService {
    * @returns a Promise<string> with the SVG of the rendered visualisation.
    */
   async getVizPopulation(): Promise<string> {
-    const vegaSpecString = `{
-    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "data": {
-      "values": [
-        {"age_group": "21-24","level":"all","people":0.12},
-        {"age_group": "21-24","level":"basic","people":0.23},
+    const vegaLiteSpec: vegaLite.TopLevelSpec = {
+      $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+      data: {
+        values: [
+          { age_group: '21-24', level: 'all', people: 0.12 },
+          { age_group: '21-24', level: 'basic', people: 0.23 },
 
-        {"age_group": "25-29","level":"all","people":0.18},
-        {"age_group": "25-29","level":"basic","people":0.26},
+          { age_group: '25-29', level: 'all', people: 0.18 },
+          { age_group: '25-29', level: 'basic', people: 0.26 },
 
-        {"age_group": "30-39","level":"all","people":0.32},
-        {"age_group": "30-39","level":"basic","people":0.35},
+          { age_group: '30-39', level: 'all', people: 0.32 },
+          { age_group: '30-39', level: 'basic', people: 0.35 },
 
-        {"age_group": "40-49","level":"all","people":0.19},
-        {"age_group": "40-49","level":"basic","people":0.13},
+          { age_group: '40-49', level: 'all', people: 0.19 },
+          { age_group: '40-49', level: 'basic', people: 0.13 },
 
-        {"age_group": "50-59","level":"all","people":0.12},
-        {"age_group": "50-59","level":"basic","people":0.04},
+          { age_group: '50-59', level: 'all', people: 0.12 },
+          { age_group: '50-59', level: 'basic', people: 0.04 },
 
-        {"age_group": "60","level":"all","people":0.12},
-        {"age_group": "60","level":"basic","people":0.04},
+          { age_group: '60', level: 'all', people: 0.12 },
+          { age_group: '60', level: 'basic', people: 0.04 },
 
-        {"age_group": "60+","level":"all","people":0.07},
-        {"age_group": "60+","level":"basic","people":0.01}
-      ]
-    },
-    "transform": [
-      {"calculate": "datum.level == 'all' ? '% of total population' : '% of basic population'", "as": "level"}
-    ],
-    "mark": "bar",
-    "encoding": {
-      "column": {
-        "field": "age_group",
-        "type": "nominal",
-        "spacing": 10,
-        "header": {"orient": "bottom"},
-        "title": "Age group"
+          { age_group: '60+', level: 'all', people: 0.07 },
+          { age_group: '60+', level: 'basic', people: 0.01 },
+        ],
       },
-      "y": {
-        "field": "people",
-        "aggregate": "sum",
-        "type": "quantitative",
-        "axis": {
-          "grid": false,
-          "values": [0, 0.10, 0.20, 0.30, 0.40],
-          "format": ".0%"
+      transform: [
+        {
+          calculate: "datum.level == 'all' ? '% of total population' : '% of basic population'",
+          as: 'level',
         },
-        "scale": {
-          "domain": [0, 0.40]
+      ],
+      facet: {
+        column: {
+          field: 'age_group',
+          type: 'ordinal',
+          header: { orient: 'bottom' },
+          title: 'Age group',
+          sort: 'ascending',
         },
-        "title": null
       },
-      "x": {
-        "field": "level",
-        "axis": null,
-        "sort": "descending"
+      spec: {
+        layer: [
+          {
+            mark: {
+              type: 'bar',
+              width: {
+                band: 1.1,
+              },
+            },
+            encoding: {
+              y: {
+                field: 'people',
+                aggregate: 'sum',
+                type: 'quantitative',
+                axis: {
+                  grid: false,
+                  values: [0, 0.1, 0.2, 0.3, 0.4],
+                  format: '%',
+                },
+                scale: {
+                  domain: [0, 0.4],
+                },
+                title: null,
+              },
+              x: {
+                field: 'level',
+                axis: null,
+              },
+              color: {
+                field: 'level',
+                title: null,
+                scale: {
+                  domain: ['% of basic population', '% of total population'],
+                  range: [basicLevelColour, totalColour],
+                },
+                legend: {
+                  direction: 'horizontal',
+                  orient: 'bottom',
+                  labelFontSize: 9,
+                },
+              },
+            },
+          },
+          {
+            mark: {
+              type: 'text',
+              align: 'center',
+              baseline: 'bottom',
+              dy: -2,
+            },
+            encoding: {
+              text: {
+                type: 'quantitative',
+                field: 'people',
+                aggregate: 'sum',
+                format: '.0%',
+              },
+              x: {
+                type: 'ordinal',
+                axis: {
+                  grid: false,
+                  title: '',
+                },
+                field: 'level',
+              },
+              y: {
+                field: 'people',
+                aggregate: 'sum',
+                type: 'quantitative',
+              },
+            },
+          },
+        ],
       },
-      "color": {
-        "field": "level",
-        "scale": {"range": ["${basicLevelColour}", "${totalColour}"]}
-      }
-    },
-    "config": {
-      "view": {"stroke": "transparent"},
-      "axis": {"domainWidth": 1}
+      width: { step: 30 },
+      config: {
+        view: {
+          stroke: 'transparent',
+        },
+      },
     }
-  }`
-    const vegaLiteSpec: vegaLite.TopLevelSpec = JSON.parse(vegaSpecString)
 
     // `vega-lite`'s `compile()` converts a Vega-Lite specification into a Vega one
     const { spec: vegaSpec } = vegaLite.compile(vegaLiteSpec)
 
     const view = new vega.View(vega.parse(vegaSpec))
-    return view.toSVG(1.5)
+    return view.toSVG()
   }
 }

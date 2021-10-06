@@ -26,6 +26,11 @@ export default function setUpStaticResources(): Router {
   ;[
     ['/assets/images/favicon.ico', '/favicon.ico'],
     ['/node_modules/jquery/dist/jquery.min.js', '/assets/js/jquery.min.js'],
+    ['/node_modules/vega/build/vega.min.js', '/assets/js/vega.min.js'],
+    ['/node_modules/vega-lite/build/vega-lite.min.js', '/assets/js/vega-lite.min.js'],
+    ['/node_modules/vega-embed/build/vega-embed.min.js', '/assets/js/vega-embed.min.js'],
+    // Serve data used by interactive visualisation example
+    ['/data/seattle-weather.csv', '/data/seattle-weather.csv'],
   ].forEach(mapping => {
     const [filePath, urlPath] = mapping
     router.use(urlPath, express.static(path.join(process.cwd(), filePath), cacheControl))

@@ -20,8 +20,19 @@ export default function setUpWebSecurity(): Router {
           defaultSrc: ["'self'"],
           fontSrc: ["'self'"],
           imgSrc: ["'self'", 'data:'],
-          scriptSrc: ["'self'", (req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          styleSrc: ["'self'"],
+          scriptSrc: [
+            "'self'",
+            (req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`,
+            // WARNING: Required by vegaEmbeb to render graph on the client side ⚠️
+            // https://github.com/vega/vega/issues/1106
+            "'unsafe-eval'",
+          ],
+          styleSrc: [
+            "'self'",
+            // vega-embed styles (better than using 'unsafe-inline')
+            "'sha256-OFmSA1qUYJVEnJD+Lk0NB+cugrPZzqE1VLybxdqSXb0='",
+            "'sha256-/gFjybzm2cU4MbaLSWpSqW5eLj+JZBii6jm4umpv1+A='",
+          ],
         },
       },
     })
