@@ -18,6 +18,13 @@ describe('Service healthcheck', () => {
     nock.cleanAll()
   })
 
+  afterAll(() => {
+    // nocks' cleanAll() doesn't clear delays' requests, these hang causing the warning:
+    // 'This usually means that there are asynchronous operations that weren't stopped in your tests.'
+    // See: https://github.com/nock/nock/issues/1118
+    nock.abortPendingRequests()
+  })
+
   describe('Check healthy', () => {
     it('Should return data from api', async () => {
       fakeServiceApi.get('/ping').reply(200, 'pong')
