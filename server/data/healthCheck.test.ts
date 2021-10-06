@@ -2,6 +2,8 @@ import nock from 'nock'
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
 
+jest.mock('../../logger')
+
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {
     response: 100,

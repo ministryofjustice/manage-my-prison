@@ -5,6 +5,7 @@ import HmppsAuthClient from './hmppsAuthClient'
 import TokenStore from './tokenStore'
 
 jest.mock('./tokenStore')
+jest.mock('../../logger')
 
 const tokenStore = new TokenStore(null) as jest.Mocked<TokenStore>
 
