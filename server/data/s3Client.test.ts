@@ -18,7 +18,7 @@ const selectObjectContentCommand = {
 
 jest.mock('@aws-sdk/client-s3', () => {
   return {
-    S3: jest.fn(() => s3),
+    S3Client: jest.fn(() => s3),
     GetObjectCommand: jest.fn(() => getObjectCommand),
     SelectObjectContentCommand: jest.fn(() => selectObjectContentCommand),
   }
@@ -28,7 +28,7 @@ describe('s3Client', () => {
   let s3Client: S3Client
 
   beforeEach(() => {
-    s3Client = new S3Client(<S3BucketConfig>bucketConfig)
+    s3Client = new S3Client(bucketConfig as S3BucketConfig)
   })
 
   afterEach(() => {
@@ -37,10 +37,10 @@ describe('s3Client', () => {
 
   it('should return object', async () => {
     const object = Buffer.from('some object')
-    const stream = Readable.from(object.toString())
+    const stream = Readable.from(object)
     s3.send.mockResolvedValue({ Body: stream })
     const response = await s3Client.getObject('any-key')
-    expect(response).toEqual(object.toString())
+    expect(response).toEqual('some object')
   })
 
   it('should return array of objects', async () => {

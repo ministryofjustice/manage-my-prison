@@ -1,5 +1,11 @@
-import { SelectObjectContentCommandInput, S3, GetObjectCommand, SelectObjectContentCommand } from '@aws-sdk/client-s3'
 import { Readable } from 'stream'
+
+import {
+  S3Client as Client,
+  GetObjectCommand,
+  SelectObjectContentCommand,
+  SelectObjectContentCommandInput,
+} from '@aws-sdk/client-s3'
 import getStream from 'get-stream'
 
 export interface S3BucketConfig {
@@ -10,13 +16,12 @@ export interface S3BucketConfig {
 }
 
 export default class S3Client {
-  s3: S3
+  s3: Client
 
   bucket: string
 
   constructor(config: S3BucketConfig) {
-    this.s3 = new S3({
-      apiVersion: '2006-03-01',
+    this.s3 = new Client({
       region: 'eu-west-2',
       credentials: {
         accessKeyId: config.accessKeyId,
@@ -33,7 +38,6 @@ export default class S3Client {
       Bucket: this.bucket,
       Key: key,
     })
-
     const response = await this.s3.send(command)
     return (await getStream.buffer(response.Body as Readable)).toString()
   }
