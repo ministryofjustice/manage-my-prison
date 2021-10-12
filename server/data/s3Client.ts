@@ -3,6 +3,10 @@ import { Readable } from 'stream'
 import {
   S3Client as Client,
   GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  DeleteObjectCommand,
   SelectObjectContentCommand,
   SelectObjectContentCommandInput,
 } from '@aws-sdk/client-s3'
@@ -45,6 +49,37 @@ export default class S3Client {
       chunks.push(chunk)
     }
     return Buffer.concat(chunks).toString('utf8')
+  }
+
+  async putObject(
+    key: string,
+    data: string | Readable | Buffer | Uint8Array,
+    options: Omit<PutObjectCommandInput, 'Bucket' | 'Key' | 'Body'> = {}
+  ): Promise<void> {
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: data,
+      ...options,
+    })
+    await this.s3.send(command)
+  }
+
+  async deleteObject(key: string): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    })
+    await this.s3.send(command)
+  }
+
+  async listObjects(prefix?: string): Promise<string[]> {
+    const command = new ListObjectsV2Command({
+      Bucket: this.bucket,
+      Prefix: prefix,
+    })
+    const response = await this.s3.send(command)
+    return response.Contents.map(object => object.Key)
   }
 
   async selectObjectContent(s3selectParams: SelectObjectContentCommandInput): Promise<unknown[]> {
