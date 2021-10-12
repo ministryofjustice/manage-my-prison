@@ -1,6 +1,15 @@
-import { SelectObjectContentCommandInput, S3, GetObjectCommand, SelectObjectContentCommand } from '@aws-sdk/client-s3'
 import { Readable } from 'stream'
-import getStream from 'get-stream'
+
+import {
+  S3Client as Client,
+  GetObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  DeleteObjectCommand,
+  SelectObjectContentCommand,
+  SelectObjectContentCommandInput,
+} from '@aws-sdk/client-s3'
 
 export interface S3BucketConfig {
   accessKeyId: string
@@ -10,13 +19,12 @@ export interface S3BucketConfig {
 }
 
 export default class S3Client {
-  s3: S3
+  s3: Client
 
   bucket: string
 
   constructor(config: S3BucketConfig) {
-    this.s3 = new S3({
-      apiVersion: '2006-03-01',
+    this.s3 = new Client({
       region: 'eu-west-2',
       credentials: {
         accessKeyId: config.accessKeyId,
@@ -33,17 +41,52 @@ export default class S3Client {
       Bucket: this.bucket,
       Key: key,
     })
-
     const response = await this.s3.send(command)
-    return (await getStream.buffer(response.Body as Readable)).toString()
+    const readableBody = response.Body as Readable
+    const chunks: Uint8Array[] = []
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const chunk of readableBody) {
+      chunks.push(chunk)
+    }
+    return Buffer.concat(chunks).toString('utf8')
+  }
+
+  async putObject(
+    key: string,
+    data: string | Readable | Buffer | Uint8Array,
+    options: Omit<PutObjectCommandInput, 'Bucket' | 'Key' | 'Body'> = {}
+  ): Promise<void> {
+    const command = new PutObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+      Body: data,
+      ...options,
+    })
+    await this.s3.send(command)
+  }
+
+  async deleteObject(key: string): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    })
+    await this.s3.send(command)
+  }
+
+  async listObjects(prefix?: string): Promise<string[]> {
+    const command = new ListObjectsV2Command({
+      Bucket: this.bucket,
+      Prefix: prefix,
+    })
+    const response = await this.s3.send(command)
+    return response.Contents.map(object => object.Key)
   }
 
   async selectObjectContent(s3selectParams: SelectObjectContentCommandInput): Promise<unknown[]> {
     const command = new SelectObjectContentCommand(s3selectParams)
     const response = await this.s3.send(command)
-
     const records: Uint8Array[] = []
-    /* eslint-disable-next-line */
+    // eslint-disable-next-line no-restricted-syntax
     for await (const event of response.Payload) {
       if (event.Records) {
         records.push(event.Records.Payload)
