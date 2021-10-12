@@ -29,7 +29,7 @@ jest.mock('@aws-sdk/client-s3', () => {
   }
 })
 
-describe('s3Client', () => {
+describe('S3Client', () => {
   let s3Client: S3Client
 
   beforeEach(() => {
@@ -40,89 +40,94 @@ describe('s3Client', () => {
     jest.clearAllMocks()
   })
 
-  it('should return object', async () => {
-    const object = Buffer.from('some object')
-    const stream = Readable.from(object)
-    const awsResponse: GetObjectOutput = { Body: stream }
-    s3.send.mockResolvedValue(awsResponse)
-    const response = await s3Client.getObject('any-key')
-    expect(response).toEqual('some object')
-  })
-
-  it('should upload object', async () => {
-    const awsResponse: PutObjectOutput = {}
-    s3.send.mockResolvedValue(awsResponse)
-    const response = await s3Client.putObject('some-key', 'data to be saved in S3')
-    expect(response).toBeUndefined()
-    // expect the first parameter of the first call to include bucket name
-    const [putCommand] = s3.send.mock.calls[0]
-    const { Bucket, Key, Body } = putCommand.input
-    expect({ Bucket, Key, Body }).toEqual({
-      Bucket: bucketConfig.bucket,
-      Key: 'some-key',
-      Body: 'data to be saved in S3',
+  describe('getObject()', () => {
+    it('returns an object as a string', async () => {
+      const object = Buffer.from('some object')
+      const stream = Readable.from(object)
+      const awsResponse: GetObjectOutput = { Body: stream }
+      s3.send.mockResolvedValue(awsResponse)
+      const response = await s3Client.getObject('any-key')
+      expect(response).toEqual('some object')
     })
   })
 
-  it('should delete objects', async () => {
-    const awsResponse: DeleteObjectOutput = {}
-    s3.send.mockResolvedValue(awsResponse)
-    const response = await s3Client.deleteObject('a-key')
-    expect(response).toBeUndefined()
-    // expect the first parameter of the first call to include bucket name
-    const [deleteCommand] = s3.send.mock.calls[0]
-    const { Bucket, Key } = deleteCommand.input
-    expect({ Bucket, Key }).toEqual({
-      Bucket: bucketConfig.bucket,
-      Key: 'a-key',
+  describe('putObject()', () => {
+    it('uploads a string object', async () => {
+      const awsResponse: PutObjectOutput = {}
+      s3.send.mockResolvedValue(awsResponse)
+      const response = await s3Client.putObject('some-key', 'data to be saved in S3')
+      expect(response).toBeUndefined()
+      // expect the first parameter of the first call to include bucket name
+      const [putCommand] = s3.send.mock.calls[0]
+      const { Bucket, Key, Body } = putCommand.input
+      expect({ Bucket, Key, Body }).toEqual({
+        Bucket: bucketConfig.bucket,
+        Key: 'some-key',
+        Body: 'data to be saved in S3',
+      })
     })
   })
 
-  it('should list objects', async () => {
-    const awsResponse: ListObjectsV2Output = {
-      Contents: [{ Key: 'object 1' }, { Key: 'object-2' }],
-    }
-    s3.send.mockResolvedValue(awsResponse)
-    const response = await s3Client.listObjects()
-    expect(response).toEqual(['object 1', 'object-2'])
+  describe('deleteObject()', () => {
+    it('deletes an object', async () => {
+      const awsResponse: DeleteObjectOutput = {}
+      s3.send.mockResolvedValue(awsResponse)
+      const response = await s3Client.deleteObject('a-key')
+      expect(response).toBeUndefined()
+      // expect the first parameter of the first call to include bucket name
+      const [deleteCommand] = s3.send.mock.calls[0]
+      const { Bucket, Key } = deleteCommand.input
+      expect({ Bucket, Key }).toEqual({
+        Bucket: bucketConfig.bucket,
+        Key: 'a-key',
+      })
+    })
   })
 
-  it('should return array of objects', async () => {
-    const object = [{ amount: 123 }, { amount: 234 }]
+  describe('listObjects()', () => {
+    it('returns a list of object keys', async () => {
+      const awsResponse: ListObjectsV2Output = {
+        Contents: [{ Key: 'object 1' }, { Key: 'object-2' }],
+      }
+      s3.send.mockResolvedValue(awsResponse)
+      const response = await s3Client.listObjects()
+      expect(response).toEqual(['object 1', 'object-2'])
+    })
+  })
 
-    async function* it() {
-      yield { Records: { Payload: Buffer.from(`${JSON.stringify(object[0])},`) } }
-      yield { Records: { Payload: Buffer.from(`${JSON.stringify(object[1])},`) } }
-    }
-
-    const asyncIterable = {
-      async *[Symbol.asyncIterator]() {
-        yield* await it()
-      },
-    }
-    const awsResponse: SelectObjectContentOutput = { Payload: asyncIterable }
-    s3.send.mockResolvedValue(awsResponse)
-
-    const command = {
-      Bucket: config.s3.bucket,
-      Key: 'test-data.csv',
-      ExpressionType: 'SQL',
-      Expression: `SELECT amount FROM s3object`,
-      InputSerialization: {
-        CSV: {
-          FileHeaderInfo: 'USE',
-          RecordDelimiter: '\n',
-          FieldDelimiter: ',',
+  describe('selectObjectContent()', () => {
+    it('returns an array of objects', async () => {
+      const mockObjects = [{ amount: 123 }, { amount: 234 }]
+      const mockPayload = {
+        async *[Symbol.asyncIterator]() {
+          yield { Records: { Payload: Buffer.from(`${JSON.stringify(mockObjects[0])},`) } }
+          yield { Records: { Payload: Buffer.from(`${JSON.stringify(mockObjects[1])},`) } }
         },
-      },
-      OutputSerialization: {
-        JSON: {
-          RecordDelimiter: ',',
-        },
-      },
-    }
+      }
+      const awsResponse: SelectObjectContentOutput = { Payload: mockPayload }
+      s3.send.mockResolvedValue(awsResponse)
 
-    const response = await s3Client.selectObjectContent(command)
-    expect(response).toEqual(expect.arrayContaining(object))
+      const command = {
+        Bucket: config.s3.bucket,
+        Key: 'test-data.csv',
+        ExpressionType: 'SQL',
+        Expression: `SELECT amount FROM s3object`,
+        InputSerialization: {
+          CSV: {
+            FileHeaderInfo: 'USE',
+            RecordDelimiter: '\n',
+            FieldDelimiter: ',',
+          },
+        },
+        OutputSerialization: {
+          JSON: {
+            RecordDelimiter: ',',
+          },
+        },
+      }
+
+      const response = await s3Client.selectObjectContent(command)
+      expect(response).toEqual(expect.arrayContaining(mockObjects))
+    })
   })
 })
