@@ -5,7 +5,7 @@
   <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
 {% endblock %}
 
-{% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
+{% block pageTitle %}{{ pageTitle | default(applicationName) }}{% endblock %}
 
 {% block header %}
   {% include "./header.njk" %}
