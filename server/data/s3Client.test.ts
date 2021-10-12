@@ -7,7 +7,6 @@ import type {
 } from '@aws-sdk/client-s3'
 import { Readable } from 'stream'
 
-import config from '../config'
 import S3Client, { S3BucketConfig } from './s3Client'
 
 const bucketConfig = { bucket: 'bucket1' } as S3BucketConfig
@@ -108,7 +107,7 @@ describe('S3Client', () => {
       s3.send.mockResolvedValue(awsResponse)
 
       const command = {
-        Bucket: config.s3.bucket,
+        Bucket: bucketConfig.bucket,
         Key: 'test-data.csv',
         ExpressionType: 'SQL',
         Expression: `SELECT amount FROM s3object`,
