@@ -1,6 +1,8 @@
+import type { GetObjectOutput, SelectObjectContentOutput } from '@aws-sdk/client-s3'
 import { Readable } from 'stream'
-import S3Client, { S3BucketConfig } from './s3Client'
+
 import config from '../config'
+import S3Client, { S3BucketConfig } from './s3Client'
 
 const bucketConfig = { bucket: 'bucket1' }
 
@@ -8,19 +10,12 @@ const s3 = {
   send: jest.fn().mockReturnThis(),
 }
 
-const getObjectCommand = {
-  GetObjectCommand: jest.fn().mockReturnThis(),
-}
-
-const selectObjectContentCommand = {
-  GetObjectCommand: jest.fn().mockReturnThis(),
-}
-
 jest.mock('@aws-sdk/client-s3', () => {
+  const { GetObjectCommand, SelectObjectContentCommand } = jest.requireActual('@aws-sdk/client-s3')
   return {
     S3Client: jest.fn(() => s3),
-    GetObjectCommand: jest.fn(() => getObjectCommand),
-    SelectObjectContentCommand: jest.fn(() => selectObjectContentCommand),
+    GetObjectCommand,
+    SelectObjectContentCommand,
   }
 })
 
@@ -38,7 +33,8 @@ describe('s3Client', () => {
   it('should return object', async () => {
     const object = Buffer.from('some object')
     const stream = Readable.from(object)
-    s3.send.mockResolvedValue({ Body: stream })
+    const awsResponse: GetObjectOutput = { Body: stream }
+    s3.send.mockResolvedValue(awsResponse)
     const response = await s3Client.getObject('any-key')
     expect(response).toEqual('some object')
   })
@@ -56,7 +52,8 @@ describe('s3Client', () => {
         yield* await it()
       },
     }
-    s3.send.mockResolvedValue({ Payload: asyncIterable })
+    const awsResponse: SelectObjectContentOutput = { Payload: asyncIterable }
+    s3.send.mockResolvedValue(awsResponse)
 
     const command = {
       Bucket: config.s3.bucket,
