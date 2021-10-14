@@ -3,6 +3,7 @@ import * as vegaLite from 'vega-lite'
 
 import { SelectObjectContentCommandInput } from '@aws-sdk/client-s3'
 import config from '../config'
+import AthenaClient from '../data/athenaClient'
 import S3Client from '../data/s3Client'
 
 const positiveBehaviourColour = '#48659E'
@@ -12,14 +13,13 @@ const totalColour = negativeBehaviourColour
 const basicLevelColour = positiveBehaviourColour
 
 export default class VisualisationService {
-  constructor(private readonly s3Client: S3Client) {}
+  constructor(private readonly s3Client: S3Client, private readonly athenaClient?: AthenaClient) {}
 
   /**
    * Gets an example visualisation from S3 and returns the rendered SVG.
    *
    * Data is embedded/hardcoded into the visualisation in this example.
    *
-   * @param s3Client S3 client to use to get the visualisation.
    * @returns a Promise<string> with the SVG of the rendered visualisation.
    */
   async getViz1(): Promise<string> {
@@ -40,7 +40,6 @@ export default class VisualisationService {
    * An example of a possible way to filter data in Vega is also included
    * (commented) in the code.
    *
-   * @param s3Client S3 client to use to get the visualisation.
    * @returns a Promise<string> with the SVG of the rendered visualisation.
    */
   async getViz2(): Promise<string> {
