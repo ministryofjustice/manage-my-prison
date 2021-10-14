@@ -16,7 +16,7 @@ generic-service:
     port: 3000
 
   service:
-    enabled: true
+    enabled: true    # must be false if `maintenanceMode` is true
 
   ingress:
     enabled: true

@@ -1,6 +1,10 @@
 {{- if .Values.maintenanceMode -}}
 {{/*
 Replaces service created by generic-service subchart redirecting all traffic to default backend maintenance page
+Notes:
+- the generic-service chart's service cannot be modified in a way to point to a different set of pods/port combination
+- turned on by setting `maintenanceMode` to true
+- `generic-service.service.enabled` MUST be set to false because this service uses the same name and selector labels
 */}}
 apiVersion: v1
 kind: Service
