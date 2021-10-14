@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: athena-setup-{{ .Release.Revision }}
+  labels:
+    {{- include "manage-my-prison.labels" . | nindent 4 }}
+  annotations:
+    # job runs before every release
+    "helm.sh/hook": pre-install,pre-upgrade
+    # only deletes job on next release
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "manage-my-prison.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ index .Values "generic-service" "serviceAccountName" }}
+      restartPolicy: OnFailure
+      containers:
+        - name: athena-setup
+          image: "{{ index .Values "generic-service" "image" "repository" | default "repo" }}:{{ index .Values "generic-service" "image" "tag" | default "latest" }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - npm
+            - run
+            - setup-athena-tables
+          env:
+            {{- range $secret, $envs := index .Values "generic-service" "namespace_secrets" | default dict }}
+            {{- range $key, $val := $envs }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  key: {{ $val }}
+                  name: {{ $secret }}
+            {{- end }}
+          {{- end }}
+  backoffLimit: 4
+  completions: 1
+  parallelism: 1
