@@ -6,6 +6,9 @@ Notes:
 - turned on by setting `maintenanceMode` to true
 - `generic-service.service.enabled` MUST be set to false because this service uses the same name and selector labels
 */}}
+{{- if index .Values "generic-service" "service" "enabled" -}}
+  {{ fail "`maintenanceMode` and `generic-service.service.enabled` cannot both be true!" }}
+{{- end -}}
 apiVersion: v1
 kind: Service
 metadata:
