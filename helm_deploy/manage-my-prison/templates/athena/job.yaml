@@ -27,6 +27,7 @@ spec:
             - run
             - setup-athena-tables
           env:
+            {{/* "deployment.envs" template from generic-service chart cannot be reused */}}
             {{- range $secret, $envs := index .Values "generic-service" "namespace_secrets" | default dict }}
             {{- range $key, $val := $envs }}
             - name: {{ $key }}
@@ -35,7 +36,11 @@ spec:
                   key: {{ $val }}
                   name: {{ $secret }}
             {{- end }}
-          {{- end }}
+            {{- end }}
+            {{- range $key, $val := index .Values "generic-service" "env" | default dict }}
+            - name: {{ $key }}
+              value: "{{ $val }}"
+            {{- end }}
   backoffLimit: 4
   completions: 1
   parallelism: 1
