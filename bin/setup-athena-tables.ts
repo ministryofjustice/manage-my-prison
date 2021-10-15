@@ -8,7 +8,7 @@ import S3Client from '../server/data/s3Client'
 
 const table = 'sample'
 const sampleCsvPath = path.resolve(process.cwd(), 'data', 'seattle-weather.csv')
-const databaseS3Path = 'athena/sample/' // NB: must end in slash
+const databaseS3Path = 'athena/sample/'
 const sampleCsvS3Path = `${databaseS3Path}data.csv`
 
 function getEnvironmentVariable(name: string) {

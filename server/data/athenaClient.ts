@@ -101,6 +101,15 @@ export default class AthenaClient {
    * The source data is expected to be in CSV form with 1 header row
    */
   async createCSVTable(tableName: string, s3Location: string, columns: string[]): Promise<boolean> {
+    if (!s3Location.startsWith('s3://') || !s3Location.endsWith('/')) {
+      throw new Error('s3Location must start with "s3://" and end with "/"')
+    }
+    if (s3Location.includes('*') || s3Location.includes('_')) {
+      throw new Error('s3Location must not include "*" or "_"')
+    }
+    if (s3Location.includes('arn:aws:s3:')) {
+      throw new Error('s3Location must not include ARN')
+    }
     const query = `
     CREATE EXTERNAL TABLE IF NOT EXISTS ${tableName} (
       ${columns.join(',\n')}

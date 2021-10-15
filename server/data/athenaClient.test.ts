@@ -155,6 +155,20 @@ describe('AthenaClient', () => {
       expect(QueryString).toEqual(expect.stringContaining('skip.header.line.count'))
       expect(QueryString).toEqual(expect.stringMatching(/;$/))
     })
+
+    describe.each([
+      ['with missing prefix', `${bucketConfig.bucket}/population-data-folder/`],
+      ['with missing trailing slash', `s3://${bucketConfig.bucket}/population-data-folder/sample.csv`],
+      ['with glob pattern', `s3://${bucketConfig.bucket}/population-data-folder/*/`],
+      ['with underscore', `s3://${bucketConfig.bucket}/population_data_folder/`],
+      ['with ARN included', `s3://arn:aws:s3:::${bucketConfig.bucket}/population-data-folder/`],
+    ])('disallows invalid S3 location', (name: string, bucketLocation: string) => {
+      it(name, () => {
+        expect(
+          athenaClient.createCSVTable('prison_population', bucketLocation, ['prison_id STRING', 'population INT'])
+        ).rejects.toThrow(/s3Location must/)
+      })
+    })
   })
 
   describe('dropTable()', () => {
