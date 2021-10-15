@@ -81,24 +81,22 @@ describe('AthenaClient', () => {
     })
   })
 
-  describe('executionCompletion()', () => {
-    function makeTest(status: ExecutionState) {
-      return async () => {
-        const awsResponse1 = fakeQueryExecutionStatus(ExecutionState.QUEUED)
-        const awsResponse2 = fakeQueryExecutionStatus(ExecutionState.RUNNING)
-        const awsResponse3 = fakeQueryExecutionStatus(status)
-        athena.send
-          .mockResolvedValueOnce(awsResponse1)
-          .mockResolvedValueOnce(awsResponse2)
-          .mockResolvedValueOnce(awsResponse3)
-        const response = await athenaClient.executionCompletion(fakeQueryId, 10)
-        expect(response).toEqual(status)
-      }
-    }
-
-    it('waits until the execution is successful', makeTest(ExecutionState.SUCCEEDED))
-    it('waits until the execution is cancelled', makeTest(ExecutionState.CANCELLED))
-    it('waits until the execution is failed', makeTest(ExecutionState.FAILED))
+  describe.each([
+    ['waits until the execution is successful', ExecutionState.SUCCEEDED],
+    ['waits until the execution is cancelled', ExecutionState.CANCELLED],
+    ['waits until the execution is failed', ExecutionState.FAILED],
+  ])('executionCompletion()', (name: string, status: ExecutionState) => {
+    it(name, async () => {
+      const awsResponse1 = fakeQueryExecutionStatus(ExecutionState.QUEUED)
+      const awsResponse2 = fakeQueryExecutionStatus(ExecutionState.RUNNING)
+      const awsResponse3 = fakeQueryExecutionStatus(status)
+      athena.send
+        .mockResolvedValueOnce(awsResponse1)
+        .mockResolvedValueOnce(awsResponse2)
+        .mockResolvedValueOnce(awsResponse3)
+      const response = await athenaClient.executionCompletion(fakeQueryId, 10)
+      expect(response).toEqual(status)
+    })
   })
 
   describe('executionResults()', () => {
