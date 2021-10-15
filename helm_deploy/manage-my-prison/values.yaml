@@ -53,17 +53,22 @@ generic-service:
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   namespace_secrets:
-    elasticache-redis:
-      REDIS_HOST: "primary_endpoint_address"
-      REDIS_AUTH_TOKEN: "auth_token"
     manage-my-prison:
-      APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
-      API_CLIENT_ID: "API_CLIENT_ID"
-      API_CLIENT_SECRET: "API_CLIENT_SECRET"
-      SYSTEM_CLIENT_ID: "SYSTEM_CLIENT_ID"
-      SYSTEM_CLIENT_SECRET: "SYSTEM_CLIENT_SECRET"
-      SESSION_SECRET: "SESSION_SECRET"
-      SENTRY_DSN: "SENTRY_DSN"
+      APPINSIGHTS_INSTRUMENTATIONKEY: APPINSIGHTS_INSTRUMENTATIONKEY
+      API_CLIENT_ID: API_CLIENT_ID
+      API_CLIENT_SECRET: API_CLIENT_SECRET
+      SYSTEM_CLIENT_ID: SYSTEM_CLIENT_ID
+      SYSTEM_CLIENT_SECRET: SYSTEM_CLIENT_SECRET
+      SESSION_SECRET: SESSION_SECRET
+      SENTRY_DSN: SENTRY_DSN
+    athena:
+      ATHENA_ACCESS_KEY_ID: access_key_id
+      ATHENA_SECRET_ACCESS_KEY: secret_access_key
+      ATHENA_WORK_GROUP: workgroup
+      ATHENA_DATABASE: database_name
+    elasticache-redis:
+      REDIS_HOST: primary_endpoint_address
+      REDIS_AUTH_TOKEN: auth_token
     s3:
       S3_BUCKET_NAME: bucket_name
       S3_ACCESS_KEY_ID: access_key_id
