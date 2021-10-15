@@ -23,7 +23,7 @@ executors:
       - image: cimg/node:14.15.3-browsers
       - image: bitnami/redis:5.0
         environment:
-          ALLOW_EMPTY_PASSWORD=yes
+          ALLOW_EMPTY_PASSWORD: yes
       - image: minio/minio
         command: server /data
         environment:
