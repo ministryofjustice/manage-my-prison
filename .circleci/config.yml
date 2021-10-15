@@ -23,7 +23,7 @@ executors:
       - image: cimg/node:14.15.3-browsers
       - image: bitnami/redis:5.0
         environment:
-          ALLOW_EMPTY_PASSWORD=yes
+          ALLOW_EMPTY_PASSWORD: yes
       - image: minio/minio
         command: server /data
         environment:
@@ -107,7 +107,7 @@ jobs:
       - store_test_results:
           path: test_results
       - store_artifacts:
-          path: test-results/unit-test-reports.html
+          path: test_results/unit-test-reports.html
 
   integration_test:
     executor: integration-tests
