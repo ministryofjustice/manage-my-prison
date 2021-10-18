@@ -1,10 +1,10 @@
 #! /usr/bin/env npx ts-node
 
+import fs from 'fs'
 import { exit } from 'process'
 
 import faker from 'faker'
 import moment from 'moment'
-import ObjectsToCsv from 'objects-to-csv'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
@@ -50,6 +50,24 @@ function randomOffenderId(): string {
 
 function randomNomisDate(): string {
   return moment(faker.date.past()).format(NOMIS_DATE_FORMAT)
+}
+
+function objectsToCsv(items: unknown[]): string {
+  const valueAsString = (value: unknown): string => {
+    return value === null ? '' : value.toString()
+  }
+
+  const delimiter = ','
+  const fields = Object.keys(items[0])
+  let csv = items.map((row: string[]) => {
+    const values = fields.map(fieldName => valueAsString(row[fieldName]))
+    return values.join(delimiter)
+  })
+
+  // add header column
+  csv = [fields.join(delimiter), ...csv]
+
+  return csv.join('\r\n')
 }
 
 const dataSets = {
@@ -98,19 +116,21 @@ async function main(options: Options) {
       randomData.push(row)
     }
 
-    const csvData = new ObjectsToCsv(randomData)
-
-    const csvPath = `${process.env.PWD}/data/${dataSet}.csv`
-    // eslint-disable-next-line no-await-in-loop
-    await csvData.toDisk(csvPath)
-    if (options.verbose) {
-      logger.info(`data written to ${csvPath}`)
-    }
-
-    // eslint-disable-next-line no-await-in-loop
-    const csvString = await csvData.toString()
+    const csvString = objectsToCsv(randomData)
     if (options.verbose && options.rows <= 30) {
       logger.info(dataSet, csvString)
+    }
+
+    const csvPath = `${process.env.PWD}/data/${dataSet}.csv`
+    try {
+      fs.writeFileSync(csvPath, csvString, { flag: 'w+' })
+    } catch (err) {
+      logger.error(`Failed to write CSV file: ${err}`)
+      exit(1)
+    }
+
+    if (options.verbose) {
+      logger.info(`data written to ${csvPath}`)
     }
 
     if (options.upload) {
