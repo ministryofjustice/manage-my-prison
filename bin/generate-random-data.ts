@@ -22,7 +22,7 @@ interface Options {
 const INCENTIVE_LEVELS = ['BAS', 'EN2', 'ENH', 'ENT', 'STD']
 const NOMIS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss'
 
-if (!['local', 'test'].includes(config.environment)) {
+if (!['local', 'dev', 'test'].includes(config.environment)) {
   logger.error(`Random data generation not allowed in '${config.environment}' environment`)
   exit(1)
 }
