@@ -2,6 +2,8 @@ import nock from 'nock'
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
 
+jest.mock('../../logger')
+
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {
     response: 100,
@@ -16,6 +18,13 @@ describe('Service healthcheck', () => {
 
   afterEach(() => {
     nock.cleanAll()
+  })
+
+  afterAll(() => {
+    // nocks' cleanAll() doesn't clear delays' requests, these hang causing the warning:
+    // 'This usually means that there are asynchronous operations that weren't stopped in your tests.'
+    // See: https://github.com/nock/nock/issues/1118
+    nock.abortPendingRequests()
   })
 
   describe('Check healthy', () => {

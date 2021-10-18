@@ -3,6 +3,8 @@ import { Request } from 'express'
 import verifyToken from './tokenVerification'
 import config from '../config'
 
+jest.mock('../../logger')
+
 describe('token verification api tests', () => {
   let fakeApi: nock.Scope
 

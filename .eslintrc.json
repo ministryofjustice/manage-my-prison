@@ -48,7 +48,7 @@
         "@typescript-eslint/semi": 0,
         "import/no-unresolved": "error",
         "prettier/prettier": [
-          "error",
+          "warn",
           {
             "trailingComma": "es5",
             "singleQuote": true,
@@ -97,7 +97,7 @@
     ],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.test.js", "**/*.test.ts"] }],
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         "trailingComma": "es5",
         "singleQuote": true,

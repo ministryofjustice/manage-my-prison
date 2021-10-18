@@ -3,6 +3,8 @@ import type { Request, Response } from 'express'
 
 import authorisationMiddleware from './authorisationMiddleware'
 
+jest.mock('../../logger')
+
 function createToken(authorities: string[]) {
   const payload = {
     user_name: 'USER1',
