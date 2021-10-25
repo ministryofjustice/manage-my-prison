@@ -1,7 +1,8 @@
+import { QueryExecutionState } from '@aws-sdk/client-athena'
+import { SelectObjectContentCommandInput } from '@aws-sdk/client-s3'
 import * as vega from 'vega'
 import * as vegaLite from 'vega-lite'
 
-import { SelectObjectContentCommandInput } from '@aws-sdk/client-s3'
 import config from '../config'
 import AthenaClient from '../data/athenaClient'
 import S3Client from '../data/s3Client'
@@ -274,6 +275,89 @@ export default class VisualisationService {
     const { spec: vegaSpec } = vegaLite.compile(vegaLiteSpec)
 
     const view = new vega.View(vega.parse(vegaSpec))
+    return view.toSVG()
+  }
+
+  async getAthenaViz(): Promise<string> {
+    if (!this.athenaClient) {
+      throw new Error('Athena client is not available; check credentials')
+    }
+    const id = await this.athenaClient.startExecution(
+      `SELECT
+      date_trunc('month', date) AS month,
+      min(precipitation) AS min_precipitation,
+      avg(precipitation) AS avg_precipitation,
+      max(precipitation) AS max_precipitation
+      FROM sample
+      GROUP BY 1
+      ORDER BY 1;`
+    )
+    const status = await this.athenaClient.executionCompletion(id)
+    if (status !== QueryExecutionState.SUCCEEDED) {
+      throw new Error(`Athena could not execute query: ${status}`)
+    }
+    type Row = [string, string, string, string]
+    const rows: Row[] = []
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const row of this.athenaClient.executionResults(id)) {
+      rows.push(row as Row)
+    }
+    rows.slice(1) // trim off headers
+    const values = rows.map(([date, min, avg, max]) => {
+      const [minF, avgF, maxF] = [parseFloat(min), parseFloat(avg), parseFloat(max)]
+      return { date, error1: minF - avgF, precipitation: avgF, error2: maxF - avgF }
+    })
+    const inputSpec: vegaLite.TopLevelSpec = {
+      $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+      data: { values },
+      width: 500,
+      height: 450,
+      mark: 'bar',
+      encoding: {
+        x: {
+          field: 'date',
+          timeUnit: 'yearmonth',
+          axis: { grid: false },
+          title: 'Date',
+        },
+      },
+      layer: [
+        {
+          mark: {
+            type: 'errorbar',
+            color: '#80abe2',
+            ticks: { color: '#80abe2' },
+          },
+          encoding: {
+            y: {
+              field: 'precipitation',
+              type: 'quantitative',
+              axis: { grid: false },
+              title: 'Precipitation',
+            },
+            yError: { field: 'error1' },
+            yError2: { field: 'error2' },
+          },
+        },
+        {
+          mark: {
+            type: 'point',
+            filled: true,
+            color: 'blue',
+          },
+          encoding: {
+            y: {
+              field: 'precipitation',
+              type: 'quantitative',
+              axis: { grid: false },
+              title: 'Precipitation',
+            },
+          },
+        },
+      ],
+    }
+    const { spec } = vegaLite.compile(inputSpec)
+    const view = new vega.View(vega.parse(spec))
     return view.toSVG()
   }
 }

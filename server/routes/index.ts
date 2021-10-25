@@ -22,5 +22,10 @@ export default function routes(router: Router): Router {
     res.render('pages/index', { visPopulation, vis1: viz1, vis2: viz2, vis3: viz3 })
   })
 
+  get('/athena-sample', async (req, res) => {
+    const athenaViz = await visualisationService.getAthenaViz()
+    res.render('pages/athena-sample', { athenaViz })
+  })
+
   return router
 }
