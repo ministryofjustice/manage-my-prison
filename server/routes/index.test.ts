@@ -4,8 +4,7 @@ import appWithAllRoutes from './testutils/appSetup'
 import VisualisationService from '../services/visualisationService'
 
 jest.mock('../services/visualisationService')
-
-const visulisationService = new VisualisationService(null) as jest.Mocked<VisualisationService>
+const mockedVisualisationService = VisualisationService.prototype as jest.Mocked<VisualisationService>
 
 let app: Express
 
@@ -18,17 +17,35 @@ afterEach(() => {
 })
 
 describe('GET /', () => {
-  it('should render index page', () => {
-    visulisationService.getViz1.mockResolvedValue(null)
-    visulisationService.getViz2.mockResolvedValue(null)
-    visulisationService.getViz3.mockResolvedValue(null)
-    visulisationService.getVizPopulation.mockResolvedValue(null)
+  it('renders index page', () => {
+    mockedVisualisationService.getViz1.mockResolvedValue('§viz1')
+    mockedVisualisationService.getViz2.mockResolvedValue('§viz2')
+    mockedVisualisationService.getViz3.mockResolvedValue('§viz3')
+    mockedVisualisationService.getVizPopulation.mockResolvedValue('§vizPopulation')
 
     return request(app)
       .get('/')
       .expect('Content-Type', /html/)
       .expect(res => {
-        expect(res.text).toContain('Behaviour entries')
+        const responseContent = res.text
+        expect(responseContent).toContain('Manage My Prison – Behaviour entries')
+        expect(responseContent).toContain('§viz1')
+        expect(responseContent).toContain('§viz2')
+        expect(responseContent).toContain('§viz3')
+        expect(responseContent).toContain('§vizPopulation')
+      })
+  })
+})
+describe('GET /athena-sample', () => {
+  it('renders sample Athena chart', () => {
+    mockedVisualisationService.getAthenaViz.mockResolvedValue('§athenaViz')
+
+    return request(app)
+      .get('/athena-sample')
+      .expect(res => {
+        const responseContent = res.text
+        expect(responseContent).toContain('Manage My Prison – Athena Sample')
+        expect(responseContent).toContain('§athenaViz')
       })
   })
 })
