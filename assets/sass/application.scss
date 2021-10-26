@@ -4,5 +4,6 @@ $path: '/assets/images/';
 @import 'govuk/all';
 @import 'moj/all';
 
-@import './components/header-bar';
 @import './local';
+@import './components/header-bar';
+@import './components/error-page';
