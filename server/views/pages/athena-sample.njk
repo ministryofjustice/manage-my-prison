@@ -3,13 +3,11 @@
 {% set pageTitle = applicationName + " – Athena Sample" %}
 
 {% block content %}
-  <main class="app-container govuk-body">
-    <h1 class="govuk-heading-l">Seattle Weather – Athena Sample</h1>
+  <h1 class="govuk-heading-l">Seattle Weather – Athena Sample</h1>
 
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        {{ athenaViz | safe }}
-      </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      {{ athenaViz | safe }}
     </div>
-  </main>
+  </div>
 {% endblock %}

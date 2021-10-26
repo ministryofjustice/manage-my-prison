@@ -4,22 +4,20 @@
 
 {% block content %}
 
-  <main class="app-container">
-    <h1 class="govuk-heading-l">{{ message }}</h1>
+  <h1 class="govuk-heading-l">{{ message }}</h1>
 
-    <details class="govuk-details" data-module="govuk-details">
-      <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-          Error details
-        </span>
-      </summary>
-      <div class="govuk-details__text">
-        {% if status %}
-          <p class="govuk-body-l">{{ status }}</p>
-        {% endif %}
-        <pre class="app-error-stack">{{ stack }}</pre>
-      </div>
-    </details>
-  </main>
+  <details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+      <span class="govuk-details__summary-text">
+        Error details
+      </span>
+    </summary>
+    <div class="govuk-details__text">
+      {% if status %}
+        <p class="govuk-body-l">{{ status }}</p>
+      {% endif %}
+      <pre class="app-error-stack">{{ stack }}</pre>
+    </div>
+  </details>
 
 {% endblock %}
