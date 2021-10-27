@@ -38,8 +38,8 @@
     "clean": "rm -rf node_modules assets/stylesheets dist"
   },
   "engines": {
-    "node": "^14",
-    "npm": "^6.4.1"
+    "node": "^16.13",
+    "npm": "^8.1"
   },
   "jest": {
     "preset": "ts-jest",
