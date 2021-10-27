@@ -41,6 +41,13 @@ export default {
     secretAccessKey: get('S3_SECRET_ACCESS_KEY', 'secret_access_key', requiredInProduction),
     endpoint: get('S3_ENDPOINT', null),
   },
+  // athena settings are currently optional; if absent, client will not be available in visualisation service
+  athena: {
+    accessKeyId: get('ATHENA_ACCESS_KEY_ID', null),
+    secretAccessKey: get('ATHENA_SECRET_ACCESS_KEY', null),
+    workGroup: get('ATHENA_WORK_GROUP', null),
+    database: get('ATHENA_DATABASE', null),
+  },
   redis: {
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT, 10) || 6379,

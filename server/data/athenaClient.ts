@@ -24,6 +24,10 @@ export default class AthenaClient {
 
   database: string
 
+  static isConfigSufficient(config: AthenaConfig): boolean {
+    return Boolean(config.accessKeyId && config.secretAccessKey && config.workGroup && config.database)
+  }
+
   constructor(config: AthenaConfig) {
     this.athena = new Client({
       region: 'eu-west-2',
