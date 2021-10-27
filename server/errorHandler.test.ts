@@ -1,8 +1,8 @@
 import type { Express } from 'express'
 import request from 'supertest'
-import appWithAllRoutes from './routes/testutils/appSetup'
 
-jest.mock('../logger')
+import appWithAllRoutes from './routes/testutils/appSetup'
+import { overrideLoggerForRequest } from '../logger'
 
 let app: Express
 
@@ -18,6 +18,7 @@ describe('GET 404', () => {
   it('should render content with stack in dev mode', () => {
     return request(app)
       .get('/unknown')
+      .use(overrideLoggerForRequest())
       .expect(404)
       .expect('Content-Type', /html/)
       .expect(res => {
@@ -29,6 +30,7 @@ describe('GET 404', () => {
   it('should render content without stack in production mode', () => {
     return request(appWithAllRoutes({ production: true }))
       .get('/unknown')
+      .use(overrideLoggerForRequest())
       .expect(404)
       .expect('Content-Type', /html/)
       .expect(res => {

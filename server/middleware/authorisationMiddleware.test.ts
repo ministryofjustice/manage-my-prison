@@ -2,8 +2,7 @@ import jwt from 'jsonwebtoken'
 import type { Request, Response } from 'express'
 
 import authorisationMiddleware from './authorisationMiddleware'
-
-jest.mock('../../logger')
+import { overrideLoggerSync } from '../../logger'
 
 function createToken(authorities: string[]) {
   const payload = {
@@ -46,9 +45,11 @@ describe('authorisationMiddleware', () => {
   it('should redirect when user has no authorised roles', () => {
     const res = createResWithToken({ authorities: [] })
 
-    const authorisationResponse = authorisationMiddleware(['SOME_REQUIRED_ROLE'])(req, res, next)
+    overrideLoggerSync(() => {
+      const authorisationResponse = authorisationMiddleware(['SOME_REQUIRED_ROLE'])(req, res, next)
 
-    expect(authorisationResponse).toEqual('/authError')
+      expect(authorisationResponse).toEqual('/authError')
+    })
   })
 
   it('should return next when user has authorised role', () => {

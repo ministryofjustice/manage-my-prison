@@ -1,8 +1,8 @@
 import nock from 'nock'
+
 import { serviceCheckFactory } from './healthCheck'
 import { AgentConfig } from '../config'
-
-jest.mock('../../logger')
+import { overrideLoggerAsync } from '../../logger'
 
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {
@@ -40,7 +40,7 @@ describe('Service healthcheck', () => {
     it('Should throw error from api', async () => {
       fakeServiceApi.get('/ping').thrice().reply(500)
 
-      await expect(healthcheck()).rejects.toThrow('Internal Server Error')
+      await expect(overrideLoggerAsync(healthcheck)).rejects.toThrow('Internal Server Error')
     })
   })
 

@@ -3,9 +3,9 @@ import nock from 'nock'
 import config from '../config'
 import HmppsAuthClient from './hmppsAuthClient'
 import TokenStore from './tokenStore'
+import { overrideLoggerAsync } from '../../logger'
 
 jest.mock('./tokenStore')
-jest.mock('../../logger')
 
 const tokenStore = new TokenStore(null) as jest.Mocked<TokenStore>
 
@@ -35,7 +35,7 @@ describe('hmppsAuthClient', () => {
         .matchHeader('authorization', `Bearer ${token.access_token}`)
         .reply(200, response)
 
-      const output = await hmppsAuthClient.getUser(token.access_token)
+      const output = await overrideLoggerAsync(() => hmppsAuthClient.getUser(token.access_token))
       expect(output).toEqual(response)
     })
   })
@@ -47,7 +47,7 @@ describe('hmppsAuthClient', () => {
         .matchHeader('authorization', `Bearer ${token.access_token}`)
         .reply(200, [{ roleCode: 'role1' }, { roleCode: 'role2' }])
 
-      const output = await hmppsAuthClient.getUserRoles(token.access_token)
+      const output = await overrideLoggerAsync(() => hmppsAuthClient.getUserRoles(token.access_token))
       expect(output).toEqual(['role1', 'role2'])
     })
   })
@@ -73,7 +73,7 @@ describe('hmppsAuthClient', () => {
         .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
         .reply(200, token)
 
-      const output = await hmppsAuthClient.getSystemClientToken(username)
+      const output = await overrideLoggerAsync(() => hmppsAuthClient.getSystemClientToken(username))
 
       expect(output).toEqual(token.access_token)
       expect(tokenStore.setToken).toBeCalledWith('Bob', token.access_token, 240)
@@ -88,7 +88,7 @@ describe('hmppsAuthClient', () => {
         .matchHeader('Content-Type', 'application/x-www-form-urlencoded')
         .reply(200, token)
 
-      const output = await hmppsAuthClient.getSystemClientToken()
+      const output = await overrideLoggerAsync(() => hmppsAuthClient.getSystemClientToken())
 
       expect(output).toEqual(token.access_token)
       expect(tokenStore.setToken).toBeCalledWith('%ANONYMOUS%', token.access_token, 240)
