@@ -7,8 +7,8 @@ import request from 'supertest'
 import appWithAllRoutes from './testutils/appSetup'
 import AthenaClient from '../data/athenaClient'
 import S3Client from '../data/s3Client'
+import { overrideLoggerForRequest } from '../../logger'
 
-jest.mock('../../logger')
 jest.mock('../data/athenaClient')
 jest.mock('../data/s3Client')
 
@@ -77,6 +77,7 @@ describe('GET /athena-sample', () => {
 
     return request(app)
       .get('/athena-sample')
+      .use(overrideLoggerForRequest())
       .expect(res => {
         const responseContent = res.text
         expect(responseContent).toContain('Manage My Prison – Error')
