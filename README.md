@@ -64,7 +64,7 @@ To start the main services excluding the example typescript template app:
 
 `docker-compose up --scale=app=0`
 
-Install dependencies using `npm install`, ensuring you are using >= `Node v14.x`
+Install dependencies using `npm install`, ensuring you are using Node 16.
 
 And then, to build the assets and start the app with nodemon:
 

@@ -15,12 +15,12 @@ parameters:
 
   node-version:
     type: string
-    default: 14.17-browsers
+    default: 16.12-browsers
 
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:14.15.3-browsers
+      - image: cimg/node:16.12-browsers
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD: yes
