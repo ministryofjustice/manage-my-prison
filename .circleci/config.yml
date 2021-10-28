@@ -70,6 +70,9 @@ jobs:
             - build-info.json
             - build
             - dist
+      - persist_to_workspace:
+          root: ..
+          paths:
             - .cache/Cypress
 
   check_outdated:
