@@ -1,5 +1,4 @@
-import { setTimeout } from 'timers'
-import { promisify } from 'util'
+import { setTimeout } from 'timers/promises'
 
 import {
   AthenaClient as Client,
@@ -69,11 +68,10 @@ export default class AthenaClient {
   /**
    * Awaits an execution’s completion (whether successful or not)
    */
-  async executionCompletion(id: string, delay?: number): Promise<QueryExecutionState> {
-    const timer = promisify(setTimeout)
+  async executionCompletion(id: string, delay = 500): Promise<QueryExecutionState> {
     for (;;) {
       // eslint-disable-next-line no-await-in-loop
-      await timer(delay || 1000)
+      await setTimeout(delay)
       // eslint-disable-next-line no-await-in-loop
       const status = await this.getExecutionStatus(id)
       if (
