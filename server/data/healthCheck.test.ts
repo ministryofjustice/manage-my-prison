@@ -12,6 +12,10 @@ describe('Service healthcheck', () => {
 
   let fakeServiceApi: nock.Scope
 
+  beforeAll(() => {
+    jest.resetModules()
+  })
+
   beforeEach(() => {
     fakeServiceApi = nock('http://test-service.com')
   })

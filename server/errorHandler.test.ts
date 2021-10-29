@@ -4,6 +4,8 @@ import request from 'supertest'
 import appWithAllRoutes from './routes/testutils/appSetup'
 import { overrideLoggerForRequest } from '../logger'
 
+jest.mock('./data/s3Client')
+
 let app: Express
 
 beforeEach(() => {
