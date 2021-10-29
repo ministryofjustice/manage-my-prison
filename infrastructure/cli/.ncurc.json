@@ -1,0 +1,7 @@
+{
+  "peer": true,
+  "reject": [
+    "@types/node",
+    "@kubernetes/client-node"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@ministryofjustice/manage-my-prison-cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^16",
+    "npm": "^8"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules",
+    "npm-check-updates": "npx npm-check-updates --doctor --upgrade",
+    "security-audit": "npx audit-ci --config ../../audit-ci.json",
+    "test": "tsc && eslint . --ext .js,.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-athena": "^3",
+    "@aws-sdk/client-ecr": "^3",
+    "@aws-sdk/client-s3": "^3",
+    "@aws-sdk/node-http-handler": "^3",
+    "@aws-sdk/types": "^3",
+    "@kubernetes/client-node": "^0.14",
+    "@tsconfig/node16": "^1",
+    "@types/node": "^16",
+    "@types/nunjucks": "^3",
+    "@types/semver": "^7",
+    "@types/yargs": "^17",
+    "@typescript-eslint/eslint-plugin": "^5",
+    "@typescript-eslint/parser": "^5",
+    "chalk": "^4",
+    "eslint": "^8",
+    "node-fetch": "^3",
+    "nunjucks": "^3",
+    "prettier": "^2",
+    "redis": "^3",
+    "semver": "^7",
+    "ts-node": "^10",
+    "typescript": "^4",
+    "yaml": "^1",
+    "yargs": "^17"
+  }
+}

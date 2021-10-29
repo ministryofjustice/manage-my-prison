@@ -1,0 +1,82 @@
+{
+  "root": true,
+  "env": {
+    "es2021": true,
+    "browser": false,
+    "node": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "reportUnusedDisableDirectives": true,
+  "rules": {
+    "indent": ["error", 2, {"SwitchCase": 1}],
+    "complexity": ["error", 20],
+    "eol-last": ["error"],
+    "max-len": ["error", 120],
+    "semi": ["error", "never"],
+    "space-infix-ops": ["error"],
+
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "only-multiline"
+    }],
+    "comma-spacing": ["error"],
+    "comma-style": ["error"],
+    "keyword-spacing": ["error"],
+    "linebreak-style": ["error", "unix"],
+    "no-multi-spaces": ["error", {"ignoreEOLComments": true}],
+    "no-trailing-spaces": ["error"],
+    "no-whitespace-before-property": ["error"],
+    "quotes": ["error", "single", {"avoidEscape": true}],
+    "radix": ["error", "always"],
+    "space-unary-ops": ["error"],
+    "spaced-comment": ["error"],
+    "key-spacing": ["error"],
+
+    "array-bracket-spacing": ["warn"],
+    "brace-style": ["warn", "1tbs"],
+    "camelcase": ["warn"],
+    "curly": ["warn", "all"],
+    "eqeqeq": ["warn"],
+    "func-call-spacing": ["warn"],
+    "guard-for-in": ["warn"],
+    "init-declarations": ["warn"],
+    "no-eval": ["warn"],
+    "no-extra-parens": ["warn"],
+    "no-implicit-coercion": ["warn"],
+    "no-implicit-globals": ["warn"],
+    "no-implied-eval": ["warn"],
+    "no-labels": ["warn"],
+    "no-lone-blocks": ["warn"],
+    "no-lonely-if": ["warn"],
+    "no-multi-str": ["warn"],
+    "no-return-assign": ["warn"],
+    "no-self-compare": ["warn"],
+
+    "no-unsafe-negation": ["warn"],
+    "no-unused-expressions": ["warn"],
+    "no-useless-call": ["warn"],
+    "no-useless-concat": ["warn"],
+    "no-useless-escape": ["warn"],
+    "no-void": ["warn"],
+    "no-with": ["warn"],
+    // "object-property-newline": ["warn"],
+    "wrap-iife": ["warn"],
+
+    "no-use-before-define": ["off"],
+    "@typescript-eslint/ban-ts-comment": ["off"],
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/no-inferrable-types": ["warn"]
+  }
+}

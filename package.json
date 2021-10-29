@@ -41,6 +41,7 @@
     "node": "^16.13",
     "npm": "^8.1"
   },
+  "workspaces": ["infrastructure/cli"],
   "jest": {
     "preset": "ts-jest",
     "collectCoverageFrom": [
