@@ -41,12 +41,12 @@ jobs:
       - checkout
       - run:
           name: Update npm
-          command: 'sudo npm install -g npm@latest'
+          command: sudo npm install --global --no-audit --no-fund --no-progress npm@latest
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: npm ci --no-audit
+          command: npm clean-install --no-audit --no-fund --no-progress
       - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
@@ -85,13 +85,13 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install dependencies
-          command: 'npm ci --no-audit'
+          command: npm clean-install --no-audit --no-fund --no-progress
       - run:
           name: Check version
-          command: 'npm --version'
+          command: npm --version
       - run:
           name: Run check
-          command: 'npm outdated typescript govuk-frontend'
+          command: npm outdated typescript govuk-frontend
       - slack/notify:
           event: fail
           channel: << pipeline.parameters.alerts-slack-channel >>
