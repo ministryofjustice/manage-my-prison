@@ -18,6 +18,10 @@ const mockedS3Client = S3Client.prototype as jest.Mocked<S3Client>
 
 let app: Express
 
+beforeAll(() => {
+  jest.resetModules()
+})
+
 beforeEach(() => {
   mockedAthenaClientClass.isConfigSufficient.mockReturnValue(true)
   app = appWithAllRoutes({})
