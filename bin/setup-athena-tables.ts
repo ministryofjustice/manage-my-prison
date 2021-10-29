@@ -1,7 +1,4 @@
 #!/usr/bin/env npx ts-node
-// NB: this script can be run locally with `./bin/setup-athena-tables.ts`,
-//     on the server, it should be run using `npm run setup-athena-tables`.
-
 import * as fs from 'fs'
 import * as path from 'path'
 
