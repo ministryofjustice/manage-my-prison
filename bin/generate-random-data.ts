@@ -1,6 +1,5 @@
 #! /usr/bin/env npx ts-node
-
-import fs from 'fs'
+import { writeFileSync } from 'fs'
 import { exit } from 'process'
 
 import faker from 'faker'
@@ -70,7 +69,7 @@ function objectsToCsv(items: unknown[]): string {
   return csv.join('\r\n')
 }
 
-const dataSets = {
+const dataSets: { [name: string]: [string, () => string | number][] } = {
   // See example Jupyter Notebook: https://github.com/moj-analytical-services/manage-my-prison/blob/main/CF%20Incentives%20with%20Altair.ipynb
   nomis_offender_iep_levels: [
     ['offender_book_id', () => faker.datatype.number({ min: 19_000 })],
@@ -110,7 +109,7 @@ async function main(options: Options) {
 
       // eslint-disable-next-line no-restricted-syntax
       for (const [fieldName, generator] of fields) {
-        row[fieldName as string] = (generator as CallableFunction)()
+        row[fieldName] = generator()
       }
 
       randomData.push(row)
@@ -123,7 +122,7 @@ async function main(options: Options) {
 
     const csvPath = `${process.env.PWD}/data/${dataSet}.csv`
     try {
-      fs.writeFileSync(csvPath, csvString, { flag: 'w+' })
+      writeFileSync(csvPath, csvString, { flag: 'w+' })
     } catch (err) {
       logger.error(`Failed to write CSV file: ${err}`)
       exit(1)
@@ -137,7 +136,8 @@ async function main(options: Options) {
       const s3Client = new S3Client(config.s3)
       const s3key = `sandbox/data/${dataSet}.csv`
 
-      s3Client.putObject(s3key, csvString)
+      // eslint-disable-next-line no-await-in-loop
+      await s3Client.putObject(s3key, csvString)
 
       if (options.verbose) {
         logger.info(`data uploaded to s3://${config.s3.bucket}/${s3key}`)
