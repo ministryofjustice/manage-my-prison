@@ -129,6 +129,49 @@ describe('AthenaClient', () => {
         ['PR3', '198'],
       ])
     })
+
+    it('yields all result rows when there are more than fits in one response', async () => {
+      const metadata = {
+        ColumnInfo: [
+          { Name: 'prison_id', Type: 'STRING' },
+          { Name: 'population', Type: 'INT' },
+        ],
+      }
+      const awsResponse1: GetQueryResultsOutput = {
+        ResultSet: {
+          ResultSetMetadata: metadata,
+          Rows: [
+            { Data: [{ VarCharValue: 'PR1' }, { VarCharValue: '327' }] },
+            { Data: [{ VarCharValue: 'PR2' }, { VarCharValue: '312' }] },
+            { Data: [{ VarCharValue: 'PR3' }, { VarCharValue: '198' }] },
+          ],
+        },
+        NextToken: 'opaque-token-1',
+      }
+      const awsResponse2: GetQueryResultsOutput = {
+        ResultSet: {
+          ResultSetMetadata: metadata,
+          Rows: [{ Data: [{ VarCharValue: 'PR4' }, { VarCharValue: '111' }] }],
+        },
+      }
+      athena.send
+        // page 1
+        .mockResolvedValueOnce(awsResponse1)
+        // page 2
+        .mockResolvedValueOnce(awsResponse2)
+      const responsePromise = athenaClient.executionResults(fakeQueryId)
+      const rows = []
+      // eslint-disable-next-line no-restricted-syntax
+      for await (const row of responsePromise) {
+        rows.push(row)
+      }
+      expect(rows).toEqual([
+        ['PR1', '327'],
+        ['PR2', '312'],
+        ['PR3', '198'],
+        ['PR4', '111'],
+      ])
+    })
   })
 
   describe('createCSVTable()', () => {

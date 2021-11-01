@@ -88,14 +88,22 @@ export default class AthenaClient {
    * Yields rows from an execution’s results
    */
   async *executionResults(id: string): AsyncGenerator<string[]> {
-    const command = new GetQueryResultsCommand({
-      QueryExecutionId: id,
-    })
-    const response = await this.athena.send(command)
-    // eslint-disable-next-line no-restricted-syntax
-    for (const row of response.ResultSet.Rows) {
-      yield row.Data.map(datum => datum.VarCharValue)
-    }
+    let nextToken: string | undefined
+    do {
+      const command = new GetQueryResultsCommand({
+        QueryExecutionId: id,
+        MaxResults: 1000,
+        NextToken: nextToken,
+      })
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.athena.send(command)
+      nextToken = response.NextToken
+      const rows = response.ResultSet.Rows || []
+      // eslint-disable-next-line no-restricted-syntax
+      for (const row of rows) {
+        yield row.Data.map(datum => datum.VarCharValue)
+      }
+    } while (nextToken)
   }
 
   /**
