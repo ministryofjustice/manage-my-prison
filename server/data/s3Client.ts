@@ -74,12 +74,21 @@ export default class S3Client {
   }
 
   async listObjects(prefix?: string): Promise<string[]> {
-    const command = new ListObjectsV2Command({
-      Bucket: this.bucket,
-      Prefix: prefix,
-    })
-    const response = await this.s3.send(command)
-    return response.Contents.map(object => object.Key)
+    let nextToken: string | undefined
+    const objects = []
+    do {
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucket,
+        Prefix: prefix,
+        ContinuationToken: nextToken,
+      })
+      // eslint-disable-next-line no-await-in-loop
+      const response = await this.s3.send(command)
+      const results = response.Contents.map(object => object.Key)
+      nextToken = response.NextContinuationToken
+      objects.push(...results)
+    } while (nextToken)
+    return objects
   }
 
   async selectObjectContent(s3selectParams: SelectObjectContentCommandInput): Promise<unknown[]> {
