@@ -23,7 +23,7 @@ export default class AthenaClient {
 
   database: string
 
-  static isConfigSufficient(config: AthenaConfig): boolean {
+  static isConfigSufficient(config: Partial<AthenaConfig>): config is AthenaConfig {
     return Boolean(config.accessKeyId && config.secretAccessKey && config.workGroup && config.database)
   }
 
