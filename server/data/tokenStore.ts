@@ -29,7 +29,7 @@ export default class TokenStore {
   }
 
   public async setToken(key: string, token: string, durationSeconds: number): Promise<void> {
-    this.setRedisAsync(key, token, 'EX', durationSeconds)
+    await this.setRedisAsync(key, token, 'EX', durationSeconds)
   }
 
   public async getToken(key: string): Promise<string | null> {
