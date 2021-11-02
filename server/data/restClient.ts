@@ -2,10 +2,10 @@ import superagent from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 import { Readable } from 'stream'
 
-import logger from '../../logger'
-import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
+import sanitiseError from '../sanitisedError'
 import type { UnsanitisedError } from '../sanitisedError'
+import logger from '../../logger'
 
 interface GetRequest {
   path: string
@@ -62,7 +62,7 @@ export default class RestClient {
 
       return raw ? result : result.body
     } catch (error) {
-      const sanitisedError = sanitiseError(error)
+      const sanitisedError = sanitiseError(error as UnsanitisedError)
       logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
       throw sanitisedError
     }
@@ -86,7 +86,7 @@ export default class RestClient {
 
       return raw ? result : result.body
     } catch (error) {
-      const sanitisedError = sanitiseError(error)
+      const sanitisedError = sanitiseError(error as UnsanitisedError)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'POST'`)
       throw sanitisedError
     }
