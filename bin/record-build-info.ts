@@ -5,8 +5,9 @@ import { resolve } from 'path'
 const target = resolve(process.cwd(), 'build-info.json')
 
 function getEnvironmentVariable(name: string): string {
-  if (process.env[name]) {
-    return process.env[name]
+  const value = process.env[name]
+  if (value) {
+    return value
   }
   throw new Error(`Missing env var ${name}`)
 }
