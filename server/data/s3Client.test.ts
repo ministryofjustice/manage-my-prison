@@ -92,6 +92,25 @@ describe('S3Client', () => {
       const response = await s3Client.listObjects()
       expect(response).toEqual(['object 1', 'object-2'])
     })
+
+    it('returns a list of all object keys when there are more than fits in one response', async () => {
+      const awsResponse1: ListObjectsV2Output = {
+        Contents: [{ Key: 'object 1' }, { Key: 'object 2' }],
+        IsTruncated: true,
+        NextContinuationToken: 'page-2',
+      }
+      const awsResponse2: ListObjectsV2Output = {
+        Contents: [{ Key: 'object 3' }, { Key: 'object 4' }],
+        IsTruncated: false,
+      }
+      s3.send
+        // page 1
+        .mockResolvedValueOnce(awsResponse1)
+        // page 2
+        .mockResolvedValueOnce(awsResponse2)
+      const response = await s3Client.listObjects()
+      expect(response).toEqual(['object 1', 'object 2', 'object 3', 'object 4'])
+    })
   })
 
   describe('selectObjectContent()', () => {
