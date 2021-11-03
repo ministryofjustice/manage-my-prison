@@ -8,7 +8,7 @@ import type { UnsanitisedError } from '../sanitisedError'
 import logger from '../../logger'
 
 interface GetRequest {
-  path: string
+  path?: string
   query?: string
   headers?: Record<string, string>
   responseType?: string
@@ -16,7 +16,7 @@ interface GetRequest {
 }
 
 interface PostRequest {
-  path: string
+  path?: string
   headers?: Record<string, string>
   responseType?: string
   data?: Record<string, unknown>
@@ -24,7 +24,7 @@ interface PostRequest {
 }
 
 interface StreamRequest {
-  path: string
+  path?: string
   headers?: Record<string, string>
   errorLogger?: (e: UnsanitisedError) => void
 }
@@ -44,11 +44,12 @@ export default class RestClient {
     return this.config.timeout
   }
 
-  async get({ path, query = '', headers = {}, responseType = '', raw = false }: GetRequest): Promise<unknown> {
-    logger.info(`Get using user credentials: calling ${this.name}: ${path} ${query}`)
+  async get({ path, query = '', headers = {}, responseType = '', raw = false }: GetRequest = {}): Promise<unknown> {
+    const pathString = path || ''
+    logger.info(`Get using user credentials: calling ${this.name}: '${pathString}' ${query}`)
     try {
       const result = await superagent
-        .get(`${this.apiUrl()}${path}`)
+        .get(`${this.apiUrl()}${pathString}`)
         .agent(this.agent)
         .retry(2, (err, res) => {
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
@@ -63,16 +64,17 @@ export default class RestClient {
       return raw ? result : result.body
     } catch (error) {
       const sanitisedError = sanitiseError(error as UnsanitisedError)
-      logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
+      logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${pathString}', verb: 'GET'`)
       throw sanitisedError
     }
   }
 
-  async post({ path, headers = {}, responseType = '', data = {}, raw = false }: PostRequest): Promise<unknown> {
-    logger.info(`Post using user credentials: calling ${this.name}: ${path}`)
+  async post({ path, headers = {}, responseType = '', data = {}, raw = false }: PostRequest = {}): Promise<unknown> {
+    const pathString = path || ''
+    logger.info(`Post using user credentials: calling ${this.name}: '${pathString}'`)
     try {
       const result = await superagent
-        .post(`${this.apiUrl()}${path}`)
+        .post(`${this.apiUrl()}${pathString}`)
         .send(data)
         .agent(this.agent)
         .retry(2, (err, res) => {
@@ -87,16 +89,17 @@ export default class RestClient {
       return raw ? result : result.body
     } catch (error) {
       const sanitisedError = sanitiseError(error as UnsanitisedError)
-      logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'POST'`)
+      logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${pathString}', verb: 'POST'`)
       throw sanitisedError
     }
   }
 
-  async stream({ path, headers = {} }: StreamRequest): Promise<unknown> {
-    logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
+  async stream({ path, headers = {} }: StreamRequest = {}): Promise<unknown> {
+    const pathString = path || ''
+    logger.info(`Get using user credentials: calling ${this.name}: '${pathString}'`)
     return new Promise((resolve, reject) => {
       superagent
-        .get(`${this.apiUrl()}${path}`)
+        .get(`${this.apiUrl()}${pathString}`)
         .agent(this.agent)
         .auth(this.token, { type: 'bearer' })
         .retry(2, (err, res) => {
