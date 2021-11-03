@@ -27,6 +27,8 @@ describe('tokenStore', () => {
   })
 
   it('Can set token', async () => {
+    redisClient.set.mockImplementation((key, value, mode, duration, callback) => callback(null, 'OK'))
+
     await tokenStore.setToken('user-1', 'token-1', 10)
 
     expect(redisClient.set).toHaveBeenCalledWith('user-1', 'token-1', 'EX', 10, expect.any(Function))

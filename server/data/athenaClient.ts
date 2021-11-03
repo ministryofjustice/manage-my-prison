@@ -23,7 +23,7 @@ export default class AthenaClient {
 
   database: string
 
-  static isConfigSufficient(config: AthenaConfig): boolean {
+  static isConfigSufficient(config: Partial<AthenaConfig>): config is AthenaConfig {
     return Boolean(config.accessKeyId && config.secretAccessKey && config.workGroup && config.database)
   }
 
@@ -62,7 +62,7 @@ export default class AthenaClient {
       QueryExecutionId: id,
     })
     const response = await this.athena.send(command)
-    return response.QueryExecution.Status.State as QueryExecutionState
+    return response.QueryExecution?.Status?.State as QueryExecutionState
   }
 
   /**
@@ -87,7 +87,7 @@ export default class AthenaClient {
   /**
    * Yields rows from an execution’s results
    */
-  async *executionResults(id: string): AsyncGenerator<string[]> {
+  async *executionResults(id: string): AsyncGenerator<string[], void, void> {
     let nextToken: string | undefined
     do {
       const command = new GetQueryResultsCommand({
@@ -98,10 +98,11 @@ export default class AthenaClient {
       // eslint-disable-next-line no-await-in-loop
       const response = await this.athena.send(command)
       nextToken = response.NextToken
-      const rows = response.ResultSet.Rows || []
+      const rows = response.ResultSet?.Rows || []
       // eslint-disable-next-line no-restricted-syntax
       for (const row of rows) {
-        yield row.Data.map(datum => datum.VarCharValue)
+        const data = row.Data || []
+        yield data.map(datum => datum.VarCharValue)
       }
     } while (nextToken)
   }

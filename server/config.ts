@@ -3,8 +3,9 @@ import 'dotenv/config'
 const production = process.env.NODE_ENV === 'production'
 
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
-  if (process.env[name]) {
-    return process.env[name]
+  const value = process.env[name]
+  if (value) {
+    return value
   }
   if (fallback !== undefined && (!production || !options.requireInProduction)) {
     return fallback

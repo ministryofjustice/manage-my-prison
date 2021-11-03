@@ -1,7 +1,9 @@
 import superagent from 'superagent'
 import type { Request } from 'express'
-import getSanitisedError from '../sanitisedError'
+
 import config from '../config'
+import getSanitisedError from '../sanitisedError'
+import type { UnsanitisedError } from '../sanitisedError'
 import logger from '../../logger'
 
 function getApiClientToken(token: string) {
@@ -10,7 +12,7 @@ function getApiClientToken(token: string) {
     .auth(token, { type: 'bearer' })
     .timeout(config.apis.tokenVerification.timeout)
     .then(response => Boolean(response.body && response.body.active))
-    .catch(error => {
+    .catch((error: UnsanitisedError) => {
       logger.error(getSanitisedError(error), 'Error calling tokenVerificationApi')
     })
 }

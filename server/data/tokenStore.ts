@@ -15,7 +15,7 @@ const createRedisClient = () => {
 }
 
 export default class TokenStore {
-  private getRedisAsync: (key: string) => Promise<string>
+  private getRedisAsync: (key: string) => Promise<string | null>
 
   private setRedisAsync: (key: string, value: string, mode: string, durationSeconds: number) => Promise<void>
 
@@ -29,10 +29,10 @@ export default class TokenStore {
   }
 
   public async setToken(key: string, token: string, durationSeconds: number): Promise<void> {
-    this.setRedisAsync(key, token, 'EX', durationSeconds)
+    await this.setRedisAsync(key, token, 'EX', durationSeconds)
   }
 
-  public async getToken(key: string): Promise<string> {
+  public async getToken(key: string): Promise<string | null> {
     return this.getRedisAsync(key)
   }
 }

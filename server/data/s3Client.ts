@@ -75,7 +75,7 @@ export default class S3Client {
 
   async listObjects(prefix?: string): Promise<string[]> {
     let nextToken: string | undefined
-    const objects = []
+    const objects: string[] = []
     do {
       const command = new ListObjectsV2Command({
         Bucket: this.bucket,
@@ -84,7 +84,8 @@ export default class S3Client {
       })
       // eslint-disable-next-line no-await-in-loop
       const response = await this.s3.send(command)
-      const results = response.Contents.map(object => object.Key)
+      const contents = response.Contents || []
+      const results = contents.map(object => object.Key)
       nextToken = response.NextContinuationToken
       objects.push(...results)
     } while (nextToken)
@@ -97,7 +98,7 @@ export default class S3Client {
     const records: Uint8Array[] = []
     // eslint-disable-next-line no-restricted-syntax
     for await (const event of response.Payload) {
-      if (event.Records) {
+      if (event.Records?.Payload) {
         records.push(event.Records.Payload)
       }
     }
