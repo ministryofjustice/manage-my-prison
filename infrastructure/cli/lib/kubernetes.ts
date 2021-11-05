@@ -13,6 +13,7 @@ import {Exec, makeInformer, Informer, ObjectCallback, PortForward} from '@kubern
 import {cliPackageName} from './app.js'
 import {CONTEXT, DEPLOYMENT, Deployment} from './cluster.js'
 import {Port} from './misc.js'
+import {trapInterruptSignal} from './signal.js'
 import {OutputOptions} from './subprocess.js'
 
 export type Secret = {
@@ -418,34 +419,24 @@ export class KubernetesApi {
    * Forwards a pod's port to a local port
    */
   async portForward(namespace: string, podName: string, localPort: Port, podPort: Port): Promise<void> {
-    if (typeof localPort === 'string') {
-      localPort = parseInt(localPort, 10)
-    }
-    if (typeof podPort === 'string') {
-      podPort = parseInt(podPort, 10)
-    }
-    // eslint-disable-next-line init-declarations
-    let server: Server | undefined
-    const signalListener = () => {
+    const localPortNum = typeof localPort === 'string' ? parseInt(localPort, 10) : localPort
+    const podPortNum = typeof podPort === 'string' ? parseInt(podPort, 10) : podPort
+    process.stderr.write(`Port-forwarding to localhost:${localPortNum}…\n`)
+    let server: Server | undefined = undefined
+    await trapInterruptSignal(async () => {
+      const connection = new PortForward(this.config)
+      server = createServer(socket => {
+        connection.portForward(namespace, podName, [podPortNum], socket, null, socket)
+      })
+      server.listen(localPortNum, 'localhost')
+      await once(server, 'close')
+    }, () => {
       if (server) {
         process.stderr.write('Port-forwarding ending…\n')
         server.close()
       }
-    }
-    try {
-      process.stderr.write(`Port-forwarding to localhost:${localPort}…\n`)
-      process.on('SIGINT', signalListener)
-      const connection = new PortForward(this.config)
-      server = createServer(socket => {
-        connection.portForward(namespace, podName, [podPort as number], socket, null, socket)
-      })
-      server.listen(localPort, 'localhost')
-      await once(server, 'close')
-    } catch (e) {
-      console.error(e)
-    } finally {
-      process.off('SIGINT', signalListener)
-    }
+    })
+    process.stderr.write('Port-forwarding ended\n')
   }
 }
 
