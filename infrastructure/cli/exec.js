@@ -1,25 +1,31 @@
 import assert from 'assert/strict'
+import {Readable, Writable} from 'stream'
+import {setTimeout} from 'timers/promises'
 
 import {KubeConfig, Exec} from '@kubernetes/client-node'
-import {CoreV1Api, AppsV1Api} from '@kubernetes/client-node'
 
 const config = new KubeConfig()
 config.loadFromDefault()
 assert.equal(config.currentContext, 'live.cloud-platform.service.justice.gov.uk')
 
-const coreApi = config.makeApiClient(CoreV1Api)
-const appsV1Api = config.makeApiClient(AppsV1Api)
-
 const executable = new Exec(config)
 
 let tty = false
-let stdin = process.stdin
 let stdout = process.stdout
 const stderr = process.stderr
 
-const status = await new Promise(async (resolve, reject) => {
-  const webSocket = await executable.exec(
-    'manage-my-prison-dev', 'manage-my-prison-bff4cd4d7-x5m95', null,
+let stdin = Readable.from({
+  async *[Symbol.asyncIterator]() {
+    yield* process.stdin
+    yield Buffer.from('\x04')
+    // yield Uint8Array.from([0x04])
+    await setTimeout(3000)
+  },
+})
+
+const status = await new Promise((resolve, reject) => {
+  executable.exec(
+    'manage-my-prison-dev', 'default-backend-5fbb756488-4jjw6', null,
     ['xargs', 'echo', '123'],
     stdout, stderr, stdin, tty,
     status => {
@@ -29,8 +35,17 @@ const status = await new Promise(async (resolve, reject) => {
         resolve(status)
       }
     }
-  )
-  console.log('we have an open ws', webSocket)
+  ).then((webSocket) => {
+    console.log('§ we have an open ws', webSocket)
+    webSocket.on('error', (err) => {
+      console.error('§ ws err', err)
+    })
+    webSocket.on('close', (num) => {
+      console.error('§ ws close', num)
+    })
+  }).catch((err) => {
+    console.error('§ err', err)
+  })
 })
-console.log('status resolved', status)
-console.log('look out for stdin’s input being returned…?')
+console.log('§ status resolved', status)
+console.log('§ look out for stdin’s input being returned…?')
