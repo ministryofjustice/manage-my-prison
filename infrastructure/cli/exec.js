@@ -4,9 +4,10 @@ import {setTimeout} from 'timers/promises'
 
 import {KubeConfig, Exec} from '@kubernetes/client-node'
 
-if (process.argv.length < 3) {
-  throw new Error('needs command args')
-}
+assert.ok(process.argv.length > 2, 'needs command args')
+
+const podNode = 'manage-my-prison-bff4cd4d7-x5m95'
+const podPlain = 'default-backend-5fbb756488-4jjw6'
 
 const config = new KubeConfig()
 config.loadFromDefault()
@@ -14,9 +15,44 @@ assert.equal(config.currentContext, 'live.cloud-platform.service.justice.gov.uk'
 
 const executable = new Exec(config)
 
-const tty = true
+const tty = false
+const stdin = process.stdin
+const stdout = process.stdout
+const stderr = process.stderr
 
-let stdin = Readable.from({
+const command = ['sh', '-e', '-u', '+x', '-c', process.argv.slice(2).join(' ')]
+
+const status = await new Promise((resolve, reject) => {
+  executable.exec(
+    'manage-my-prison-dev', podPlain, null,
+    command,
+    stdout, stderr, stdin, tty,
+    status => {
+      if (status.status !== 'Success') {
+        reject(status)
+      } else {
+        resolve(status)
+      }
+    }
+  ).then((webSocket) => {
+    console.log('§ we have an open ws', webSocket.protocol)
+    webSocket.on('error', (err) => {
+      console.error('§ ws err', err)
+      reject(err)
+    })
+    webSocket.on('close', (num) => {
+      console.error('§ ws close', num)
+    })
+  }).catch((err) => {
+    console.error('§ err', err)
+    reject(err)
+  })
+})
+console.log('§ status resolved', status)
+
+/*
+const tty = true
+const stdin = Readable.from({
   async *[Symbol.asyncIterator]() {
     console.log('§ stdin yield*')
     yield* process.stdin
@@ -62,7 +98,7 @@ const stderr = new WrappedWritable('stderr', process.stderr)
 
 const status = await new Promise((resolve, reject) => {
   executable.exec(
-    'manage-my-prison-dev', 'default-backend-5fbb756488-4jjw6', null,
+    'manage-my-prison-dev', podPlain, null,
     process.argv.slice(2), // ['xargs', 'echo', '123'],
     stdout, stderr, stdin, tty,
     status => {
@@ -85,6 +121,8 @@ const status = await new Promise((resolve, reject) => {
   })
 })
 console.log('§ status resolved', status)
+*/
+
 
 /*
 import * as k8s from '@kubernetes/client-node'
@@ -96,7 +134,7 @@ kc.loadFromDefault()
 
 const exec = new k8s.Exec(kc)
 await exec.exec(
-  'manage-my-prison-dev', 'default-backend-5fbb756488-4jjw6', 'default-backend', command,
+  'manage-my-prison-dev', podPlain, 'default-backend', command,
   process.stdout, process.stderr, process.stdin,
   true,
   (status) => {
