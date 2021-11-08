@@ -73,11 +73,11 @@ export class Client {
     }))
   }
 
-  async putObject(key: string, content: Buffer): Promise<void> {
+  async putObject(key: string, readableContent: Readable): Promise<void> {
     await this.s3Client.send(new PutObjectCommand({
       Bucket: this.bucketName,
       Key: key,
-      Body: content,
+      Body: readableContent,
     }))
   }
 }
