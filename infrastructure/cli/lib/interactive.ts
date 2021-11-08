@@ -9,6 +9,9 @@ type ConfirmOptions = {
   proceedUnlessProduction?: Environment
 }
 
+/**
+ * Prompts user to continue; used for potentially-dangerous actions
+ */
 export async function confirm<T>(
   question: string,
   callback: () => T,

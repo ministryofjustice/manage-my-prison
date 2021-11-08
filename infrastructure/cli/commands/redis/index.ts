@@ -31,6 +31,9 @@ export class Client {
     readonly primaryEndpointAddress: string
   ) {}
 
+  /**
+   * Describes how to get redis secret
+   */
   howToGetSecret(): string {
     const ns = namespace(this.environment)
     const cli = `$ secret get ${this.environment} ${Client.secretName}` +

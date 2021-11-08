@@ -43,6 +43,9 @@ export class Client {
     private readonly ecrClient: ECRClient,
   ) {}
 
+  /**
+   * Shortens docker image tags by replacing repository with an abbreviation
+   */
   abbreviateImage(image: string): string {
     const prefixes = [
       [`${this.repoUrl}:`, '[ecr]:'],
@@ -114,6 +117,9 @@ export class Client {
   }
 }
 
+/**
+ * Suggest logging into ECR if docker error indicates it’s necessary
+ */
 export function checkDockerError(environment: string, error: any): void {
   const errorMessage = error?.stderr
   if (errorMessage.includes('no basic auth credentials') || errorMessage.includes('authorization token has expired')) {

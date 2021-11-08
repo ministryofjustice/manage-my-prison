@@ -29,14 +29,7 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
   }
   imageDetails.sort((image1, image2) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const [date1, date2] = [image1.imagePushedAt!, image2.imagePushedAt!]
-    if (date1 > date2) {
-      return -1
-    }
-    if (date1 < date2) {
-      return 1
-    }
-    return 0
+    return image2.imagePushedAt!.getTime() - image1.imagePushedAt!.getTime()
   })
   imageDetails.forEach(image => {
     if (!image.imageTags) {

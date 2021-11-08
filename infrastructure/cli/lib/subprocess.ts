@@ -23,7 +23,7 @@ export class SubprocessError extends Error {
  * - normally kills parent process if the child exits with a non-zero code
  * - but can instead collect child’s stderr and throw a SubprocessError
  * - optionally pipes string input to the child’s stdin
- * TODO: is execa better?
+ * TODO: is `execa` better?
  */
 export async function subprocess(
   executable: string,

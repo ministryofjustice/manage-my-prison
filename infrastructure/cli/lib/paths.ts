@@ -1,6 +1,9 @@
 import * as path from 'path'
 import {URL} from 'url'
 
+/**
+ * Path to dirctory containing script (replaces __dirname in ESM mode)
+ */
 export function scriptParentDirectory(importMetaUrl: string): string {
   const scriptPath = new URL(importMetaUrl).pathname
   return path.dirname(scriptPath)

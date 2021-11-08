@@ -14,11 +14,17 @@ export const DEPLOYMENT: Deployment = appName
 // AWS region
 export const REGION = 'eu-west-2'
 
+/**
+ * Converts an environment name into a Cloud Platform kubernetes namespace
+ */
 export function namespace(environment: Environment): string {
   assert.ok(ENVIRONMENTS.includes(environment), `Unknown environment ${environment}`)
   return `${appName}-${environment}`
 }
 
+/**
+ * Converts an environment name into domain name
+ */
 export function ingressUrl(environment: Environment): string {
   assert.ok(ENVIRONMENTS.includes(environment), `Unknown environment ${environment}`)
   switch (environment) {

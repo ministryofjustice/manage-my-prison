@@ -171,6 +171,9 @@ export class KubernetesApi {
     return null
   }
 
+  /**
+   * Watches for changes to a list-able resource; must be cancelled using an AbortController
+   */
   async startWatching<T extends KubernetesObject>(
     path: string,
     listQuery: ListPromise<T>,
@@ -201,6 +204,10 @@ export class KubernetesApi {
     return informer
   }
 
+  /**
+   * Awaits until a condition is met by a particular pod, deployment or job
+   * For example, that a pod has progressed to the "Ready" state
+   */
   async condition(namespace: string, resource: 'pod', name: string, condition: string): Promise<V1Pod>
   async condition(namespace: string, resource: 'deployment', name: string, condition: string): Promise<V1Deployment>
   async condition(namespace: string, resource: 'job', name: string, condition: string): Promise<V1Job>
@@ -260,6 +267,10 @@ export class KubernetesApi {
     })
   }
 
+  /**
+   * Executes a command in a named pod, optionally collecting output
+   * TODO: if input is passed to the command's stdin, the output cannot be collected
+   */
   async exec(
     namespace: string,
     pod: string,
@@ -290,7 +301,7 @@ export class KubernetesApi {
     command: string[],
     {container, input, output = 'stdout', inputEndDelay = 1000, signal}: ExecOptions = {}
   ): Promise<any | string | void> {
-    const api = new Exec(this.config)
+    const executor = new Exec(this.config)
 
     let tty = false
     let stdin: Readable | null = null
@@ -325,7 +336,7 @@ export class KubernetesApi {
     // eslint-disable-next-line no-async-promise-executor
     const status: V1Status | null = await new Promise(async (resolve, reject) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const webSocket = await api.exec(namespace, pod, container!, command, stdout, stderr, stdin, tty, status => {
+      const webSocket = await executor.exec(namespace, pod, container!, command, stdout, stderr, stdin, tty, status => {
         if (status.status !== 'Success') {
           reject(status)
         } else {
@@ -355,6 +366,10 @@ export class KubernetesApi {
     }
   }
 
+  /**
+   * Runs a pod and awaits it's "Ready" state
+   * TODO: add option to await "Succeeded" phase
+   */
   async runPod(
     namespace: string,
     image: string,
@@ -399,6 +414,9 @@ export class KubernetesApi {
     process.stderr.write(`Pod ${name} is ready\n`)
   }
 
+  /**
+   * Forwards a pod's port to a local port
+   */
   async portForward(namespace: string, podName: string, localPort: Port, podPort: Port): Promise<void> {
     if (typeof localPort === 'string') {
       localPort = parseInt(localPort, 10)
@@ -431,6 +449,9 @@ export class KubernetesApi {
   }
 }
 
+/**
+ * Wrapper for kubernetes client single item response to turn a 404 error into a null object
+ */
 async function itemResponse<T>(promise: Promise<{body:T}>): Promise<T | null> {
   try {
     const response = await promise
@@ -444,11 +465,17 @@ async function itemResponse<T>(promise: Promise<{body:T}>): Promise<T | null> {
   }
 }
 
+/**
+ * Wrapper for kubernetes client list response
+ */
 async function listResponse<T>(promise: Promise<{body: {items: T[]}}>): Promise<T[]> {
   const response = await promise
   return response.body.items || []
 }
 
+/**
+ * A "Writable" where data written can be collected as a single Buffer
+ */
 class WritableCollector extends Writable {
   private readonly chunks: any[]
   private readonly finish: Promise<any>
@@ -457,6 +484,10 @@ class WritableCollector extends Writable {
     const chunks: any[] = []
     super({
       write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+        if (encoding && !['binary', 'buffer'].includes(encoding)) {
+          callback(new Error('Only binary / Buffer / Uint8Array data can be written to WritableCollector'))
+          return
+        }
         chunks.push(chunk)
         callback()
       },

@@ -18,6 +18,9 @@ export const DeploymentPositional: Positional = {
   description: 'Pods from this deployment are targeted',
 }
 
+/**
+ * Looks up currently-deployed app version
+ */
 export async function getDeploymentVersion(
   namespace: string,
   deployment: Deployment = DEPLOYMENT
@@ -42,6 +45,9 @@ type ExecScriptOptions = {
   input: string
 } & Partial<OutputOptions>
 
+/**
+ * Runs javascript within node on a given pod
+ */
 export async function execScript(options: ExecScriptOptions & {output: 'stdout'}): Promise<void>
 export async function execScript(options: ExecScriptOptions & {output: 'text'}): Promise<string>
 export async function execScript(options: ExecScriptOptions & {output: 'object'}): Promise<any>
@@ -62,6 +68,9 @@ type Response<T> = {
   [pod: string]: T
 }
 
+/**
+ * Performs an HTTP request locally within a pod
+ */
 export async function remoteRequest(
   environment: Environment,
   url: string,
@@ -107,8 +116,9 @@ export async function remoteRequest(
   }
 }
 
-export const versionRegex = /^(?<buildDate>\d{4}-\d{2}-\d{2})\.(?<ciBuildNumber>\d+)\.(?<commitHash>[0-9a-f]{7})$/i
-
+/**
+ * Get checked-out git commit hash
+ */
 export async function currentCommitHash(): Promise<string> {
   return await subprocess('git', ['rev-parse', '--verify', 'HEAD'], {cwd: getMainPath(), output: 'text'})
 }

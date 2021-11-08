@@ -22,6 +22,9 @@ export function changeCase(string: string, {separator = '-'} = {}): string {
     .join('')
 }
 
+/**
+ * Date to string YYYY-MM-DD
+ */
 export function shortDate(date: number | string | Date | undefined): string {
   if (typeof date === 'string') {
     date = new Date(Date.parse(date))
@@ -35,6 +38,9 @@ export function shortDate(date: number | string | Date | undefined): string {
   return date || 'Unknown date'
 }
 
+/**
+ * Date to string YYYY-MM-DD HH:MM
+ */
 export function shortDateTime(date: number | string | Date | undefined): string {
   if (typeof date === 'string') {
     date = new Date(Date.parse(date))
@@ -49,6 +55,9 @@ export function shortDateTime(date: number | string | Date | undefined): string 
   return date || 'Unknown date/time'
 }
 
+/**
+ * First 7 chars of a docker image
+ */
 export function shortDigest(imageDigest: string): string {
   if (imageDigest.startsWith('sha256:')) {
     return imageDigest.substring(7, 14)
@@ -56,6 +65,9 @@ export function shortDigest(imageDigest: string): string {
   return imageDigest
 }
 
+/**
+ * Abbreviated amount of bytes
+ */
 export function bytes(size: number): string {
   const suffixes = ['B', 'KiB', 'MiB', 'GiB']
   for (const suffix of suffixes) {
@@ -67,6 +79,9 @@ export function bytes(size: number): string {
   return `${Math.round(size)}TiB`
 }
 
+/**
+ * Async iterable to array
+ */
 export async function collect<T>(it: AsyncIterable<T>): Promise<T[]> {
   const collected: T[] = []
   for await (const item of it) {

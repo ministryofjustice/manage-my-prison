@@ -4,21 +4,16 @@ import * as inspector from 'inspector'
 import * as path from 'path'
 
 import chalk from 'chalk'
-import yargs, {CommandModule} from 'yargs'
+import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 
 import {Command, commandIsContainer, ContainerCommand} from './command.js'
 import {Verbosity} from './misc.js'
 import {getCliPath} from './paths.js'
 
-declare module 'yargs' {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  export interface Argv<T = {}> {
-    // NB: yargs type definitions are missing this form
-    command<U>(commands: CommandModule<T, U>[]): Argv<U>
-  }
-}
-
+/**
+ * CLI entrypoint
+ */
 export async function main(): Promise<void> {
   if (inspector.url()) {
     process.stderr.write('\n')
@@ -72,6 +67,9 @@ export async function main(): Promise<void> {
     .parse()
 }
 
+/**
+ * Finds command modules (yargs cannot do this in ESM mode)
+ */
 async function findCommands(): Promise<Command[]> {
   const rootPath = getCliPath('commands')
   const rootCommands: Command[] = []

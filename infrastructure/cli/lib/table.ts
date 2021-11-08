@@ -8,7 +8,7 @@ type TableOptions = {
   borders?: boolean
 }
 
-export function* table(
+function* table(
   rows: Row[],
   columns: ColumnInput[],
   {borders = true}: TableOptions = {},
@@ -61,6 +61,9 @@ export function* table(
   }
 }
 
+/**
+ * Displays table
+ */
 export function printTable(rows: Row[], columns: ColumnInput[], {borders = true}: TableOptions = {}): void {
   const lines = table(rows, columns, {borders})
   for (const line of lines) {
@@ -69,6 +72,9 @@ export function printTable(rows: Row[], columns: ColumnInput[], {borders = true}
   }
 }
 
+/**
+ * Indicates value may be a secret based on key name
+ */
 export function seemsSensitive(key: string): boolean {
   key = key.toLowerCase()
   return ['secret', 'token', 'key', 'password'].some(word => key.includes(word))

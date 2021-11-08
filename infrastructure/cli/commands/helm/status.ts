@@ -27,14 +27,7 @@ export async function handler({environment, verbosity}: EnvironmentOptions): Pro
       updatedDate = shortDateTime(updatedDate)
       return {revision, updated: updatedDate, status}
     })
-    .sort(({revision: revision1}, {revision: revision2}) => {
-      if (revision1 < revision2) {
-        return -1
-      } else if (revision1 > revision2) {
-        return 1
-      }
-      return 1
-    })
+    .sort(({revision: revision1}, {revision: revision2}) => revision2 - revision1)
   printTable(rows, [
     {name: 'Updated', key: 'updated'},
     {name: 'Revision', key: 'revision'},
