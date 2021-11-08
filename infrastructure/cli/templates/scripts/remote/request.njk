@@ -1,0 +1,24 @@
+/**
+ * Simple script that makes a pod-local HTTP GET request to the application.
+ * This template is rendered by the CLI and Kubernetes execs `node` on a pod piping this to stdin.
+ * Mainly useful to check on health of individual pods.
+ * Only the node standard library can be used.
+ */
+const http = require('http');
+process.stdout.setEncoding('utf8');
+const req = http.request({
+  hostname: 'localhost',
+  port: 3000,
+  path: '{{ url }}',
+  method: 'GET',
+  headers: {
+    'Host': '{{ environment | ingressUrl }}',
+  },
+}, (res) => {
+  res.setEncoding('utf8');
+  res.pipe(process.stdout);
+  res.on('end', () => {
+    process.exit();
+  });
+});
+req.end();
