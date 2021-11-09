@@ -26,9 +26,7 @@ export function changeCase(string: string, {separator = '-'} = {}): string {
  * Date to string YYYY-MM-DD
  */
 export function shortDate(date: number | string | Date | undefined): string {
-  if (typeof date === 'string') {
-    date = new Date(Date.parse(date))
-  } else if (typeof date === 'number') {
+  if (typeof date === 'string' || typeof date === 'number') {
     date = new Date(date)
   }
   if (date instanceof Date) {
@@ -42,9 +40,7 @@ export function shortDate(date: number | string | Date | undefined): string {
  * Date to string YYYY-MM-DD HH:MM
  */
 export function shortDateTime(date: number | string | Date | undefined): string {
-  if (typeof date === 'string') {
-    date = new Date(Date.parse(date))
-  } else if (typeof date === 'number') {
+  if (typeof date === 'string' || typeof date === 'number') {
     date = new Date(date)
   }
   if (date instanceof Date) {

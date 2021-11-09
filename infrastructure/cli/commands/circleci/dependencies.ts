@@ -77,5 +77,5 @@ async function getOrbVersion(orbName: string): Promise<OrbVersion> {
   const data = await response.json()
   // @ts-ignore
   const {createdAt, version}: {[key: string]: string} = data.data.orbVersion
-  return {createdAt: new Date(Date.parse(createdAt)), version}
+  return {createdAt: new Date(createdAt), version}
 }

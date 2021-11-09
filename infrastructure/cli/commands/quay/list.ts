@@ -66,7 +66,7 @@ async function* getImages(): AsyncGenerator<QuayImage, void, void> {
     }
     const images: QuayImage[] = data.tags.map(tag => {
       if (typeof tag.last_modified === 'string') {
-        tag.last_modified = new Date(Date.parse(tag.last_modified))
+        tag.last_modified = new Date(tag.last_modified)
       }
       return tag as QuayImage
     })
