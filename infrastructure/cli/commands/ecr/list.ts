@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import {Client} from './index.js'
 import {makeCommand} from '../../lib/command.js'
 import {EnvironmentOptions} from '../../lib/options.js'
-import {shortDate, shortDigest} from '../../lib/misc.js'
+import {bytes, shortDateTime, shortDigest} from '../../lib/misc.js'
 import {printTable} from '../../lib/table.js'
 
 export const {command, description, builder} = makeCommand(
@@ -49,15 +49,17 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
   const rows = imageDetails.map(image => {
     return {
       image: [image.printableTags.styledText, image.printableTags.unstyledLength] as [string, number],
-      created: shortDate(image.imagePushedAt),
+      created: shortDateTime(image.imagePushedAt),
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       digest: shortDigest(image.imageDigest!),
+      size: image.imageSizeInBytes ? bytes(image.imageSizeInBytes) : 'Unknown',
     }
   })
   const columns = [
     {key: 'image', name: 'Image'},
     {key: 'created', name: 'Created'},
     {key: 'digest', name: 'Digest'},
+    {key: 'size', name: 'Size'},
   ]
   printTable(rows, columns)
 }

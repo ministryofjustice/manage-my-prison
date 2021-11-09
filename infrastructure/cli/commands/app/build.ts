@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 
 import {currentCommitHash} from './index.js'
-import {Client} from '../ecr/index.js'
+import {quayUrl} from '../quay/index.js'
 import {githubRepository} from '../../lib/app.js'
 import {makeCommand} from '../../lib/command.js'
 import {shortDate} from '../../lib/misc.js'
@@ -29,8 +29,8 @@ export async function handler({tagLatest = false}: {tagLatest?: boolean} = {}): 
   const shortCommitHash = commitHash.slice(0, 7)
   const appVersion = `${buildDate}.${ciBuildNumber}.${shortCommitHash}`
 
-  const imageTag = `${Client.quayUrl}:${appVersion}`
-  const latestImageTag = `${Client.quayUrl}:latest`
+  const imageTag = `${quayUrl}:${appVersion}`
+  const latestImageTag = `${quayUrl}:latest`
 
   const args = [
     'build',
