@@ -1,4 +1,4 @@
-import {Client} from '../ecr/index.js'
+import {quayUrl} from '../quay/index.js'
 import {EnvironmentOptions, Positional} from '../../lib/options.js'
 import {DEPLOYMENT, Deployment, Environment, namespace} from '../../lib/cluster.js'
 import {KubernetesApi} from '../../lib/kubernetes.js'
@@ -33,9 +33,9 @@ export async function getDeploymentVersion(
   const containers = deploymentDetails.spec?.template.spec?.containers || []
   const currentVersion = containers
     .map(container => container.image)
-    .filter(image => image && image.startsWith(`${Client.quayUrl}:`))
+    .filter(image => image && image.startsWith(`${quayUrl}:`))
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .map(image => image!.slice(Client.quayUrl.length + 1))[0]
+    .map(image => image!.slice(quayUrl.length + 1))[0]
   return currentVersion || null
 }
 

@@ -5,6 +5,7 @@ import {GetAuthorizationTokenCommand} from '@aws-sdk/client-ecr'
 import {ImageIdentifier, ImageDetail} from '@aws-sdk/client-ecr'
 import chalk from 'chalk'
 
+import {quayUrl} from '../quay/index.js'
 import {appName} from '../../lib/app.js'
 import {Environment, REGION, namespace} from '../../lib/cluster.js'
 import {KubernetesApi} from '../../lib/kubernetes.js'
@@ -16,8 +17,6 @@ export const description = 'Manage images stored in ECR'
 type ImageFilter = Pick<DescribeImagesRequest, 'filter' | 'imageIds'>
 
 export class Client {
-  static readonly quayUrl = `quay.io/hmpps/${appName}`
-
   static async load(environment: Environment): Promise<Client> {
     const ns = namespace(environment)
     const kubernetes = new KubernetesApi()
@@ -49,7 +48,7 @@ export class Client {
   abbreviateImage(image: string): string {
     const prefixes = [
       [`${this.repoUrl}:`, '[ecr]:'],
-      [`${Client.quayUrl}:`, '[quay]:'],
+      [`${quayUrl}:`, '[quay]:'],
     ]
     for (const [prefix, replacement] of prefixes) {
       if (image.startsWith(prefix)) {
