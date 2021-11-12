@@ -12,23 +12,13 @@ describe('Service healthcheck', () => {
 
   let fakeServiceApi: nock.Scope
 
-  beforeAll(() => {
-    jest.resetModules()
-  })
-
   beforeEach(() => {
     fakeServiceApi = nock('http://test-service.com')
   })
 
   afterEach(() => {
-    nock.cleanAll()
-  })
-
-  afterAll(() => {
-    // nocks' cleanAll() doesn't clear delays' requests, these hang causing the warning:
-    // 'This usually means that there are asynchronous operations that weren't stopped in your tests.'
-    // See: https://github.com/nock/nock/issues/1118
     nock.abortPendingRequests()
+    nock.cleanAll()
   })
 
   describe('Check healthy', () => {
