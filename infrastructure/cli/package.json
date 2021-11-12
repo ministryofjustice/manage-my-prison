@@ -8,10 +8,14 @@
     "npm": "^8"
   },
   "scripts": {
-    "clean": "rm -rf node_modules",
+    "lint": "eslint . --cache --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+
+    "test": "npm run typecheck && npm run lint",
+    "clean": "rm -rf node_modules dist",
+
     "npm-check-updates": "npx npm-check-updates --doctor --upgrade",
-    "security-audit": "npx audit-ci --config ../../audit-ci.json",
-    "test": "tsc && eslint . --ext .js,.ts"
+    "security-audit": "npx audit-ci --config ../../audit-ci.json"
   },
   "dependencies": {
     "@aws-sdk/client-athena": "^3",
