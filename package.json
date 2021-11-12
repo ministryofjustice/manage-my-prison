@@ -41,7 +41,9 @@
     "node": "^16.13",
     "npm": "^8.1"
   },
-  "workspaces": ["infrastructure/cli"],
+  "workspaces": [
+    "infrastructure/cli"
+  ],
   "jest": {
     "preset": "ts-jest",
     "collectCoverageFrom": [
@@ -95,12 +97,12 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-athena": "^3.38.0",
-    "@aws-sdk/client-s3": "^3.38.0",
+    "@aws-sdk/client-athena": "^3.41.0",
+    "@aws-sdk/client-s3": "^3.41.0",
     "@ministryofjustice/frontend": "^1.0.0",
-    "@sentry/node": "^6.13.3",
+    "@sentry/node": "^6.14.3",
     "agentkeepalive": "^4.1.4",
-    "applicationinsights": "^2.1.8",
+    "applicationinsights": "^2.1.9",
     "body-parser": "^1.19.0",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
@@ -154,16 +156,16 @@
     "@types/supertest": "^2.0.11",
     "@types/yargs": "^17.0.5",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
-    "@typescript-eslint/parser": "^5.2.0",
+    "@typescript-eslint/parser": "^5.3.1",
     "concurrently": "^6.3.0",
-    "cypress": "^8.7.0",
+    "cypress": "^9.0.0",
     "cypress-multi-reporters": "^1.5.0",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-cypress": "^2.12.1",
-    "eslint-plugin-import": "2.25.2",
+    "eslint-plugin-import": "2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
