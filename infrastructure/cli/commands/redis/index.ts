@@ -1,7 +1,9 @@
 import chalk from 'chalk'
+import * as redis from 'redis'
 
 import {Environment, namespace} from '../../lib/cluster.js'
 import {KubernetesApi} from '../../lib/kubernetes.js'
+import {Port} from '../../lib/misc.js'
 
 export const description = 'Manage Elasticache Redis'
 
@@ -40,5 +42,36 @@ export class Client {
       ' | sed -n \'s/^auth_token=\\([0-9a-f]*\\)$/\\1/p'
     const kubectl = `kubectl -n ${ns} get secret ${Client.secretName} -o jsonpath={.data.auth_token} | base64 -D`
     return 'Get redis password using:\n' + chalk.green(cli) + '\nor\n' + chalk.green(kubectl) + '\n'
+  }
+
+  async connectToRedisLocally(
+    port: Port,
+    callback: (redisClient: redis.RedisClient) => void | Promise<void>,
+  ): Promise<void> {
+    const portNum = typeof port === 'string' ? parseInt(port, 10) : port
+    process.stderr.write(`Connecting to redis on local port ${portNum}…\n`)
+    const redisClient = redis.createClient({
+      password: this.authToken,
+      host: 'localhost',
+      port: portNum,
+      tls: {
+        requestCert: false,
+        rejectUnauthorized: false,
+      },
+    })
+    const value = callback(redisClient)
+    if (value && 'then' in value) {
+      await value
+    }
+    return new Promise((resolve, reject) => {
+      process.stderr.write('Redis quitting…\n')
+      redisClient.quit((err) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve()
+        }
+      })
+    })
   }
 }
