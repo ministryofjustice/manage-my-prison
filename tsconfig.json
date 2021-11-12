@@ -16,13 +16,12 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "typeRoots": ["./server/@types", "./node_modules/@types"]
   },
   "exclude": [
     "node_modules",
-    "assets/**/*.js",
+    "assets",
     "dist",
-    "infrastructure/cli",
+    "infrastructure",
     "integration_tests",
   ],
   "include": ["**/*.js", "**/*.ts"]

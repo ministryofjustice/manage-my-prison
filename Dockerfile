@@ -29,7 +29,8 @@ RUN apt-get update && \
     apt-get install -y make python g++
 
 COPY package*.json ./
-RUN CYPRESS_INSTALL_BINARY=0 npm clean-install --no-audit --no-fund --no-progress
+COPY assets/package*.json ./assets/
+RUN CYPRESS_INSTALL_BINARY=0 npm clean-install --workspaces --include-workspace-root --no-audit --no-fund --no-progress
 
 COPY . .
 RUN npm run build
