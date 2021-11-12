@@ -41,7 +41,9 @@
     "node": "^16.13",
     "npm": "^8.1"
   },
-  "workspaces": ["infrastructure/cli"],
+  "workspaces": [
+    "infrastructure/cli"
+  ],
   "jest": {
     "preset": "ts-jest",
     "collectCoverageFrom": [
@@ -154,7 +156,7 @@
     "@types/supertest": "^2.0.11",
     "@types/yargs": "^17.0.5",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
-    "@typescript-eslint/parser": "^5.2.0",
+    "@typescript-eslint/parser": "^5.3.1",
     "concurrently": "^6.3.0",
     "cypress": "^9.0.0",
     "cypress-multi-reporters": "^1.5.0",
