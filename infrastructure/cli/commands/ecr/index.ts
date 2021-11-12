@@ -104,13 +104,20 @@ export class Client {
     return {username, password, expiresAt}
   }
 
-  async runPortForwardPod(namespace: string, localPort: Port, remoteAddress: string, remotePort: Port): Promise<void> {
+  async runPortForwardPod(
+    namespace: string,
+    localPort: Port,
+    remoteAddress: string,
+    remotePort: Port,
+    signal?: AbortSignal,
+    readyCallback?: () => void | Promise<void>,
+  ): Promise<void> {
     const kubernetes = new KubernetesApi()
     const name = 'port-forward'
     const forwardingPort: Port = 8000
     const args = [`tcp:${remoteAddress}:${remotePort}`]
     await kubernetes.runPod(namespace, `${this.repoUrl}:${name}`, name, {port: forwardingPort, args})
-    await kubernetes.portForward(namespace, name, localPort, forwardingPort)
+    await kubernetes.portForward(namespace, name, localPort, forwardingPort, signal, readyCallback)
     process.stderr.write(`Deleting ${name} pod…\n`)
     await kubernetes.coreApi.deleteNamespacedPod(name, namespace)
     try {
