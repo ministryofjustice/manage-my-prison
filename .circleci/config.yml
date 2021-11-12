@@ -91,7 +91,10 @@ jobs:
           command: npm --version
       - run:
           name: Run check
-          command: npm outdated typescript govuk-frontend
+          command: |
+            npm outdated typescript
+            cd assets
+            npm outdated typescript govuk-frontend
       - slack/notify:
           event: fail
           channel: << pipeline.parameters.alerts-slack-channel >>
