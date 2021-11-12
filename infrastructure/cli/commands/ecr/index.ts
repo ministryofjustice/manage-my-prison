@@ -113,6 +113,11 @@ export class Client {
     await kubernetes.portForward(namespace, name, localPort, forwardingPort)
     process.stderr.write(`Deleting ${name} pod…\n`)
     await kubernetes.coreApi.deleteNamespacedPod(name, namespace)
+    try {
+      await kubernetes.condition(namespace, 'pod', name, 'Terminated')
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
+    process.stderr.write(`Pod ${name} deleted\n`)
   }
 }
 
