@@ -153,7 +153,7 @@
     "@types/superagent": "^4.1.13",
     "@types/supertest": "^2.0.11",
     "@types/yargs": "^17.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.2.0",
     "concurrently": "^6.3.0",
     "cypress": "^8.7.0",
