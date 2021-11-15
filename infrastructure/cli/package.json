@@ -19,7 +19,7 @@
     "@aws-sdk/client-s3": "^3",
     "@aws-sdk/node-http-handler": "^3",
     "@aws-sdk/types": "^3",
-    "@kubernetes/client-node": "^0.14",
+    "@kubernetes/client-node": "^0.16",
     "@tsconfig/node16": "^1",
     "@types/node": "^16",
     "@types/nunjucks": "^3",
