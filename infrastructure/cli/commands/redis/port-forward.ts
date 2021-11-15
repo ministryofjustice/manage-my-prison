@@ -1,10 +1,10 @@
 import {Client} from './index.js'
 import {Client as EcrClient} from '../ecr/index.js'
-import {makeCommand} from '../../lib/command.js'
-import {EnvironmentOptions} from '../../lib/options.js'
 import {namespace} from '../../lib/cluster.js'
+import {makeCommand} from '../../lib/command.js'
 import {confirm} from '../../lib/interactive.js'
 import {Port} from '../../lib/misc.js'
+import {EnvironmentOptions} from '../../lib/options.js'
 
 export const portConfig = {
   default: 6379,
@@ -26,7 +26,7 @@ interface Options extends EnvironmentOptions {
 
 export async function handler({environment, port = portConfig.default}: Options): Promise<void> {
   await confirm(
-    'Connect to production resource?',
+    'Do you want to port-forward to redis?',
     async () => {
       const ns = namespace(environment)
       const client = await Client.load(environment)
