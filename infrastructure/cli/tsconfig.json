@@ -16,5 +16,8 @@
     "files": false,
     "emit": false,
   },
-  "exclude": ["dist"],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ],
 }
