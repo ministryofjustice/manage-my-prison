@@ -7,7 +7,7 @@
     "npm": "^8"
   },
   "scripts": {
-    "build": "npm run compile-sass && tsc",
+    "build": "npm run compile-sass && esbuild --platform=browser --target=es2016 --format=iife --bundle --outfile=js/app.js ts/index.ts",
 
     "compile-sass": "sass --no-source-map --load-path=node_modules/govuk-frontend --load-path=node_modules/@ministryofjustice/frontend --load-path=../node_modules/govuk-frontend --load-path=../node_modules/@ministryofjustice/frontend ./sass/application.scss:./stylesheets/application.css --style compressed",
     "watch-sass": "npm run compile-sass -- --watch",
@@ -23,11 +23,13 @@
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^1.0.1",
+    "govuk-frontend": "^3.14.0",
     "jquery": "^3.6.0"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
     "@types/jquery": "^3.5.9",
+    "esbuild": "^0.13.14",
     "sass": "^1.44.0"
   }
 }
