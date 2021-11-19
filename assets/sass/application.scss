@@ -1,8 +1,12 @@
+// Removes need to put classes on all elements
 $govuk-global-styles: true;
-$path: '/assets/images/';
 
-@import 'govuk/all';
-@import 'moj/all';
+// URL to assets in govuk-frontend
+$govuk-assets-path: '/assets/';
+
+@import '~govuk-frontend/govuk/all';
+
+@import '~@ministryofjustice/frontend/moj/all';
 
 @import './local';
 @import './components/header-bar';

@@ -7,10 +7,7 @@
     "npm": "^8"
   },
   "scripts": {
-    "build": "npm run compile-sass && esbuild --platform=browser --target=es2016 --format=iife --bundle --outfile=js/app.js ts/index.ts",
-
-    "compile-sass": "sass --no-source-map --load-path=node_modules/govuk-frontend --load-path=node_modules/@ministryofjustice/frontend --load-path=../node_modules/govuk-frontend --load-path=../node_modules/@ministryofjustice/frontend ./sass/application.scss:./stylesheets/application.css --style compressed",
-    "watch-sass": "npm run compile-sass -- --watch",
+    "build": "ts-node build.ts",
 
     "lint": "eslint . --cache --max-warnings 0",
     "typecheck": "tsc --noEmit",
@@ -30,6 +27,6 @@
     "@tsconfig/recommended": "^1.0.1",
     "@types/jquery": "^3.5.9",
     "esbuild": "^0.13.14",
-    "sass": "^1.44.0"
+    "esbuild-sass-plugin": "^1.7.0"
   }
 }
