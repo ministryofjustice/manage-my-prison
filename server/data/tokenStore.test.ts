@@ -1,4 +1,4 @@
-import TokenStore, { RedisClient } from './tokenStore'
+import TokenStore, { RedisClient } from './tokenStore.js'
 
 const redisClient = {
   isOpen: true,

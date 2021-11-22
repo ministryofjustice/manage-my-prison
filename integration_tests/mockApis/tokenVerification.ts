@@ -1,5 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
-import { stubFor } from './wiremock'
+
+import { stubFor } from './wiremock.js'
 
 export default {
   stubPing: (): SuperAgentRequest => {

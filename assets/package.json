@@ -2,9 +2,10 @@
   "name": "@ministryofjustice/manage-my-prison-assets",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": "^16",
-    "npm": "^8"
+    "node": "^16.13",
+    "npm": "^8.1"
   },
   "scripts": {
     "build": "npm run compile-sass && tsc",

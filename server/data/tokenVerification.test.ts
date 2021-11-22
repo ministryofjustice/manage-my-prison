@@ -1,8 +1,9 @@
 import nock from 'nock'
 import { Request } from 'express'
-import verifyToken from './tokenVerification'
-import config from '../config'
-import { overrideLoggerAsync } from '../../logger'
+
+import verifyToken from './tokenVerification.js'
+import config from '../config.js'
+import { overrideLoggerAsync } from '../../logger.js'
 
 describe('token verification api tests', () => {
   let fakeApi: nock.Scope

@@ -37,6 +37,7 @@
     "int-test-ui": "cypress open",
     "clean": "rm -rf node_modules dist && npm run -ws clean"
   },
+  "type": "module",
   "engines": {
     "node": "^16.13",
     "npm": "^8.1"

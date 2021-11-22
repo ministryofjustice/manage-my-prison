@@ -1,8 +1,8 @@
 import nock from 'nock'
 
-import { serviceCheckFactory } from './healthCheck'
-import { AgentConfig } from '../config'
-import { overrideLoggerAsync } from '../../logger'
+import { serviceCheckFactory } from './healthCheck.js'
+import { AgentConfig } from '../config.js'
+import { overrideLoggerAsync } from '../../logger.js'
 
 describe('Service healthcheck', () => {
   const healthcheck = serviceCheckFactory('externalService', 'http://test-service.com/ping', new AgentConfig(), {

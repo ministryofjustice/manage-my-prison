@@ -1,10 +1,10 @@
 import type { RequestHandler, Router } from 'express'
 
-import config from '../config'
-import AthenaClient from '../data/athenaClient'
-import S3Client from '../data/s3Client'
-import asyncMiddleware from '../middleware/asyncMiddleware'
-import VisualisationService from '../services/visualisationService'
+import config from '../config.js'
+import AthenaClient from '../data/athenaClient.js'
+import S3Client from '../data/s3Client.js'
+import asyncMiddleware from '../middleware/asyncMiddleware.js'
+import VisualisationService from '../services/visualisationService.js'
 
 export default function routes(router: Router): Router {
   const get = (path: string, handler: RequestHandler) => router.get(path, asyncMiddleware(handler))

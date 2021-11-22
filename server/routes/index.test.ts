@@ -4,10 +4,10 @@ import { QueryExecutionState } from '@aws-sdk/client-athena'
 import type { Express } from 'express'
 import request from 'supertest'
 
-import appWithAllRoutes from './testutils/appSetup'
-import AthenaClient from '../data/athenaClient'
-import S3Client from '../data/s3Client'
-import { overrideLoggerForRequest } from '../../logger'
+import appWithAllRoutes from './testutils/appSetup.js'
+import AthenaClient from '../data/athenaClient.js'
+import S3Client from '../data/s3Client.js'
+import { overrideLoggerForRequest } from '../../logger.js'
 
 jest.mock('../data/athenaClient')
 jest.mock('../data/s3Client')

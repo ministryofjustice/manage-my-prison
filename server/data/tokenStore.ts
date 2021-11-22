@@ -1,7 +1,7 @@
 import { createClient } from 'redis'
 
-import logger from '../../logger'
-import config from '../config'
+import logger from '../../logger.js'
+import config from '../config.js'
 
 const redisURL =
   config.redis.tls_enabled === 'true'

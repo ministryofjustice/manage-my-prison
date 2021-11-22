@@ -1,7 +1,7 @@
-import IndexPage from '../pages/index'
-import AuthSignInPage from '../pages/authSignIn'
-import Page from '../pages/page'
-import AuthManageDetailsPage from '../pages/authManageDetails'
+import IndexPage from '../pages/index.js'
+import AuthSignInPage from '../pages/authSignIn.js'
+import Page from '../pages/page.js'
+import AuthManageDetailsPage from '../pages/authManageDetails.js'
 
 context('SignIn', () => {
   beforeEach(() => {

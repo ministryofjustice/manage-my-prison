@@ -7,7 +7,7 @@ import type {
 } from '@aws-sdk/client-s3'
 import { Readable } from 'stream'
 
-import S3Client, { S3BucketConfig } from './s3Client'
+import S3Client, { S3BucketConfig } from './s3Client.js'
 
 const bucketConfig = { bucket: 'bucket1' } as S3BucketConfig
 

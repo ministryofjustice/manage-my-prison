@@ -1,9 +1,9 @@
 import nock from 'nock'
 
-import config from '../config'
-import HmppsAuthClient from './hmppsAuthClient'
-import TokenStore from './tokenStore'
-import { overrideLoggerAsync } from '../../logger'
+import config from '../config.js'
+import HmppsAuthClient from './hmppsAuthClient.js'
+import TokenStore from './tokenStore.js'
+import { overrideLoggerAsync } from '../../logger.js'
 
 jest.mock('./tokenStore')
 

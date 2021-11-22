@@ -1,9 +1,10 @@
 import { Router } from 'express'
 import csurf from 'csurf'
-import auth from '../authentication/auth'
-import tokenVerifier from '../data/tokenVerification'
-import populateCurrentUser from '../middleware/populateCurrentUser'
-import type UserService from '../services/userService'
+
+import auth from '../authentication/auth.js'
+import tokenVerifier from '../data/tokenVerification.js'
+import populateCurrentUser from '../middleware/populateCurrentUser.js'
+import type UserService from '../services/userService.js'
 
 const testMode = process.env.NODE_ENV === 'test'
 

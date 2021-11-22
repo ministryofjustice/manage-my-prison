@@ -2,9 +2,9 @@ import passport from 'passport'
 import { Strategy } from 'passport-oauth2'
 import type { RequestHandler } from 'express'
 
-import config from '../config'
-import generateOauthClientToken from './clientCredentials'
-import type { TokenVerifier } from '../data/tokenVerification'
+import config from '../config.js'
+import generateOauthClientToken from './clientCredentials.js'
+import type { TokenVerifier } from '../data/tokenVerification.js'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport

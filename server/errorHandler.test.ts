@@ -1,8 +1,8 @@
 import type { Express } from 'express'
 import request from 'supertest'
 
-import appWithAllRoutes from './routes/testutils/appSetup'
-import { overrideLoggerForRequest } from '../logger'
+import appWithAllRoutes from './routes/testutils/appSetup.js'
+import { overrideLoggerForRequest } from '../logger.js'
 
 jest.mock('./data/s3Client')
 

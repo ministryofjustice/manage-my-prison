@@ -2,10 +2,10 @@ import superagent from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 import { Readable } from 'stream'
 
-import { ApiConfig } from '../config'
-import sanitiseError from '../sanitisedError'
-import type { UnsanitisedError } from '../sanitisedError'
-import logger from '../../logger'
+import { ApiConfig } from '../config.js'
+import sanitiseError from '../sanitisedError.js'
+import type { UnsanitisedError } from '../sanitisedError.js'
+import logger from '../../logger.js'
 
 interface GetRequest {
   path?: string
