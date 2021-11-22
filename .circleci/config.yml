@@ -92,7 +92,7 @@ jobs:
       - run:
           name: Run check outdated npm packages
           command: |
-            npm outdated typescript
+            npm outdated typescript govuk-frontend @ministryofjustice/frontend
             cd assets
             npm outdated typescript govuk-frontend
       - slack/notify:
