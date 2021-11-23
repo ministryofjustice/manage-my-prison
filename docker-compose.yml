@@ -63,7 +63,10 @@ services:
     networks:
       - hmpps
     container_name: app
-    depends_on: [redis]
+    depends_on:
+      - redis
+      - hmpps-auth
+      - minio
     ports:
       - "3000:3000"
     environment:
