@@ -5,6 +5,7 @@ services:
     image: 'bitnami/redis:5.0'
     networks:
       - hmpps_int
+    container_name: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -38,6 +39,7 @@ services:
     image: minio/mc
     networks:
       - hmpps_int
+    container_name: aws-s3-mock-setup
     depends_on:
       - minio
     volumes:

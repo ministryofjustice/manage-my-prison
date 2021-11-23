@@ -43,6 +43,7 @@ services:
     image: minio/mc
     networks:
       - hmpps
+    container_name: aws-s3-mock-setup
     depends_on:
       - minio
     volumes:
@@ -61,6 +62,7 @@ services:
     build: .
     networks:
       - hmpps
+    container_name: app
     depends_on: [redis]
     ports:
       - "3000:3000"
