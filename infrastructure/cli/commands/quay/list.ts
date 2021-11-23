@@ -1,4 +1,4 @@
-/* eslint camelcase: "off" */
+/* eslint-disable camelcase */
 import fetch from 'node-fetch'
 
 import {appName} from '../../lib/app.js'
