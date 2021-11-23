@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs'
+
 import { serviceCheckFactory } from '../data/healthCheck'
 import config from '../config'
 import type { AgentConfig } from '../config'
@@ -37,8 +39,8 @@ function addAppInfo(result: HealthCheckResult): HealthCheckResult {
 
 function getBuild() {
   try {
-    // eslint-disable-next-line global-require
-    return require('../../build-info.json')
+    const buildInfo = readFileSync('./build-info.json', { encoding: 'utf8' })
+    return JSON.parse(buildInfo)
   } catch (ex) {
     return null
   }
