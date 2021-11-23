@@ -47,6 +47,7 @@ FROM base
 COPY --from=build --chown=appuser:appgroup \
     /app/package.json \
     /app/package-lock.json \
+    /app/build-info.json \
     ./
 COPY --from=build --chown=appuser:appgroup \
     /app/assets ./assets
@@ -57,8 +58,6 @@ COPY --from=build --chown=appuser:appgroup \
 # TODO: is it safer to make node_modules read-only?
 COPY --from=build --chown=appuser:appgroup \
     /app/node_modules ./node_modules
-COPY --from=build --chown=appuser:appgroup \
-    /app/build-info.json ./dist/build-info.json
 
 EXPOSE 3000
 ENV NODE_ENV='production'
