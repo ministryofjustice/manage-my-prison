@@ -90,7 +90,7 @@ jobs:
           name: Check version
           command: npm --version
       - run:
-          name: Run check
+          name: Run check outdated npm packages
           command: |
             npm outdated typescript
             cd assets

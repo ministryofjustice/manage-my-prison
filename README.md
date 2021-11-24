@@ -1,130 +1,121 @@
-# hmpps-template-typescript
-Template github repo used for new Typescript based projects.
+Manage my prison
+================
 
-# Instructions
+This typescript-based service will provide prison staff with insights and charts to help them manage their residents.
+It will not provide a consumable api to other services.
 
-If this is a HMPPS project then the project will be created as part of bootstrapping -
-see https://github.com/ministryofjustice/dps-project-bootstrap.
+It connects to several dependency services:
 
-This bootstrap is community managed by the mojdt `#typescript` slack channel.
-Please raise any questions or queries there. Contributions welcome!
+- [HMPPS Auth](https://github.com/ministryofjustice/hmpps-auth) – to authenticate users
+- redis – to store user sessions
+- AWS S3 – to load source data (mocked when running locally)
+- AWS Athena – to build aggregated data (not available locally)
 
-Our security policy is located [here](https://github.com/ministryofjustice/hmpps-template-typescript/security/policy).
+## Running the application locally
 
-More information about the template project including features can be found [here](https://dsdmoj.atlassian.net/wiki/spaces/NDSS/pages/3488677932/Typescript+template+project).
+Requirements:
 
-## Creating a CloudPlatform namespace
+- docker
+- node v16 to run the application in auto-restarting mode
 
-When deploying to a new namespace, you may wish to use this template typescript project namespace as the basis for your new namespace:
+### …fully in docker
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live-1.cloud-platform.service.justice.gov.uk/hmpps-template-typescript>
+`docker compose up` will build and run the application and dependency services,
+but it will require restaring if any code changes.
 
-This template namespace includes an AWS elasticache setup - which is required by this template project.
+### …with only services in docker
 
-Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
+By running the application with node outside of docker,
+auto-restarting is enabled so that changes to server code and front-end assets are applied immediately.
 
-## Renaming from HMPPS Template Typescript - github Actions
+`docker compose up --scale app=0` will run only the dependency services.
 
-Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
-Click the link to `Enable Actions on this repository`.
+Before _first_ run, node packages need to be installed: `npm install`.
 
-Find the Action workflow named: `rename-project-create-pr` and click `Run workflow`.  This workflow will will
-execute the `rename-project.bash` and create Pull Request for you to review.  Review the PR and merge.
+The application needs a set of environment variables to run – they are most easily set up by creating a ".env" file.
+The minimal defaults can be copied from ".env.sample".
 
-Note: ideally this workflow would run automatically however due to a recent change github Actions are not
-enabled by default on newly created repos. There is no way to enable Actions other then to click the button in the UI.
-If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
-Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
+The application is then run with `npm run start:dev`.
 
-## Manually branding from template app
-Run the `rename-project.bash` and create a PR.
+### Logging in / HMPPS Auth
 
-The rename-project.bash script takes a single argument - the name of the project and calculates from it the project description
-It then performs a search and replace and directory renames so the project is ready to be used.
+When running locally, HMPPS Auth will be seeded with `MMP_USER` account with password `password123456`
+that can access this application.
 
-## Ensuring slack notifications are raised correctly
+In all hosted environments, users will need their own account in the matching HMPPS Auth instance.
 
-To ensure notifications are routed to the correct slack channels, update the `alerts-slack-channel` and `releases-slack-channel` parameters in `.circle/config.yml` to an appropriate channel.
+### Mocked AWS S3 – Minio
 
-## Running the app
-The easiest way to run the app is to use docker compose to create the service and all dependencies.
+When running locally using docker compose, AWS S3 is mocked using [Minio](https://github.com/minio/minio)
+by provisioned a bucket automatically with files seeded from "/data" directory of this repository.
 
-`docker-compose pull`
-
-`docker-compose up`
-
-### Dependencies
-The app requires:
-* hmpps-auth - for authentication
-* redis - session store and token caching
-
-### Running the app for development
-
-To start the main services excluding the example typescript template app:
-
-`docker-compose up --scale=app=0`
-
-Install dependencies using `npm install`, ensuring you are using Node 16.
-
-And then, to build the assets and start the app with nodemon:
-
-`npm run start:dev`
-
-You can authenticate against the local HMPPS Auth using the `MMP_USER` user
-with password `password123456`.
-
-When running the manage-my-prison application using docker-compose a number of local test machine environment
-variables should be set to make use of the local version of HMPPS Auth and Minio S3 mock server.
-
-The minimum defaults are:
-
-```
-API_CLIENT_ID=manage-my-prison-client
-API_CLIENT_SECRET=clientsecret
-S3_BUCKET_NAME=test-bucket
-S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
-S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
-S3_ENDPOINT=http://localhost:9000
-```
-
-### Run linter
-
-`npm run lint`
-
-### Run tests
-
-`npm run test`
-
-### Accessing the Minio Mock S3 service
-
-When running locally using docker-compose a fake s3 server using Minio (https://github.com/minio/minio)
-will be created with a bucket automatically provisioned and files seeded from data directory of this repository.
-
-To access the minio console and view the buckets and file go to the following address:
-`http://localhost:9001/`
+Access the minio console and view bucket contents: http://localhost:9001/
 
 You will be prompted to enter the test minio access key and secret defined in the docker-compose.yml file.
 
-### Running integration tests
+### AWS Athena
 
-For local running, start a test db, redis, and wiremock instance by:
+AWS Athena is not mocked when running locally.
+Add `dev` environment access key and secret to your personal ".env" file.
 
-`docker-compose -f docker-compose-test.yml up`
+## Testing locally
 
-Then run the server in test mode by:
+`npm test` runs unit tests – it does not require dependency services to be running.
 
-`npm run start-feature` (or `npm run start-feature:dev` to run with nodemon)
+`npm run lint` runs code linters to ensure style standards are maintained.
 
-And then either, run tests in headless mode with:
+`npm run typecheck` runs typescript compiler to ensure all interfaces are used appropriately.
 
-`npm run int-test`
+To run integration tests, these need to be run in concert:
 
-Or run tests with the cypress UI:
+- `docker compose -f docker-compose-test.yml up` to start dependency services
+- `npm run start-feature` to run the application or `npm run start-feature:dev` in auto-restarting mode
+- `npm run int-test` to perform headless tests or `npm run int-test-ui` with the cypress UI
 
-`npm run int-test-ui`
+NB: husky installs a git hook to run unit tests and auto-linting using prettier prior to committing changes.
 
+## Automated testing
 
-### Dependency Checks
+CircleCI runs all the above types of tests (linting, type-checking, unit and integration testing)
+when changed are pushed to github and also periodically performs:
 
-The template project has implemented some scheduled checks to ensure that key dependencies are kept up to date.
-If these are not desired in the cloned project, remove references to `check_outdated` job from `.circleci/config.yml`
+- security and vulnerability testing using Trivy and Veracode
+- a check for outdated npm packages for a very small subset of dependencies
+  (see "Run check outdated npm packages" step in CircleCI config)
+
+Github @dependabot is set up to try updating packages as updates are released.
+
+Helm charts are also linted by CircleCI.
+
+## Hosting and deployment
+
+This service is hosted on [Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/)
+and automatically deployed to the `dev` environment when commits are pushed to the main branch.
+
+Helm is used to manage the deployment of all relevant kubernetes resources
+and uses [HMPPS helm charts](https://ministryofjustice.github.io/hmpps-helm-charts/).
+
+See "/helm_deploy/README.md" for more information.
+
+## Scripts
+
+Scripts that are available both locally and in the built/deployed application are stored in "/bin".
+
+A suite of command line shortcuts exist in "/infrastructure/cli" for common tasks,
+particularly those related to infrastructure hosted in Cloud Platform or AWS.
+These do not form part of the built/deployed application.
+
+## Repository template
+
+This repository was cloned from [HMPPS Typescript Template](https://github.com/ministryofjustice/hmpps-template-typescript/),
+but has subsequently diverged. Notably:
+
+- all javascript files have been converted to typescript (including scripts and frontend assets) to benefit from typechecking
+- a kubernetes default backend has been added to serve customised error pages
+- a set of command line shortcuts has been added to manage infrastructure and resources in AWS
+
+[Information about the source template project](https://dsdmoj.atlassian.net/wiki/spaces/NDSS/pages/3488677932/Typescript+template+project).
+
+## Misc
+
+[Ministry of Justice security policy](https://github.com/ministryofjustice/manage-my-prison/security/policy).
