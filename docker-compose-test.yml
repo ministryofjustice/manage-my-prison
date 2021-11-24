@@ -18,7 +18,7 @@ services:
     container_name: wiremock
     restart: always
     ports:
-      - "9091:8080"
+      - '9091:8080'
 
   minio:
     image: minio/minio
@@ -32,8 +32,8 @@ services:
       - MINIO_ROOT_USER=TEST_MINIO_ACCESS_KEY
       - MINIO_ROOT_PASSWORD=TEST_MINIO_SECRET_KEY
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
 
   minio-init:
     image: minio/mc

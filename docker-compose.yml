@@ -17,9 +17,9 @@ services:
       - hmpps
     container_name: hmpps-auth
     ports:
-      - "9090:8080"
+      - '9090:8080'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/auth/health']
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
@@ -36,8 +36,8 @@ services:
       - MINIO_ROOT_USER=TEST_MINIO_ACCESS_KEY
       - MINIO_ROOT_PASSWORD=TEST_MINIO_SECRET_KEY
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
 
   minio-init:
     image: minio/mc
@@ -71,7 +71,7 @@ services:
       - hmpps-auth
       - minio
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=development
       - REDIS_HOST=redis
