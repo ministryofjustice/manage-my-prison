@@ -5,6 +5,7 @@ services:
     image: 'bitnami/redis:5.0'
     networks:
       - hmpps_int
+    container_name: redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -17,39 +18,43 @@ services:
     container_name: wiremock
     restart: always
     ports:
-      - "9091:8080"
+      - '9091:8080'
 
   minio:
     image: minio/minio
     command: server --console-address :9001 /data
     networks:
       - hmpps_int
-    container_name: aws-s3-mock
+    container_name: minio
     restart: always
     environment:
       - MINIO_REGION_NAME=eu-west-2
       - MINIO_ROOT_USER=TEST_MINIO_ACCESS_KEY
       - MINIO_ROOT_PASSWORD=TEST_MINIO_SECRET_KEY
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
 
-  createbuckets:
+  minio-init:
     image: minio/mc
     networks:
       - hmpps_int
+    container_name: minio-init
     depends_on:
       - minio
     volumes:
       - $PWD/data:/tmp/data
-    entrypoint: >
+    entrypoint: |
       /bin/sh -c "
-      sleep 3;
-      /usr/bin/mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY;
-      /usr/bin/mc rm -r --force manage-my-prison/test-bucket;
-      /usr/bin/mc mb manage-my-prison/test-bucket;
-      /usr/bin/mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/;
-      exit 0;
+        until $$(curl --output /dev/null --silent http://minio:9000); do
+          echo 'Waiting for http://minio:9000'
+          sleep 3
+        done
+        mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY
+        mc rm -r --force manage-my-prison/test-bucket
+        mc mb manage-my-prison/test-bucket
+        mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/
+        exit 0
       "
 
 networks:

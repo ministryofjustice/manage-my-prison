@@ -17,9 +17,9 @@ services:
       - hmpps
     container_name: hmpps-auth
     ports:
-      - "9090:8080"
+      - '9090:8080'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/auth/health']
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
@@ -29,50 +29,64 @@ services:
     command: server --console-address :9001 /data
     networks:
       - hmpps
-    container_name: aws-s3-mock
+    container_name: minio
     restart: always
     environment:
       - MINIO_REGION_NAME=eu-west-2
       - MINIO_ROOT_USER=TEST_MINIO_ACCESS_KEY
       - MINIO_ROOT_PASSWORD=TEST_MINIO_SECRET_KEY
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
 
-  createbuckets:
+  minio-init:
     image: minio/mc
     networks:
       - hmpps
+    container_name: minio-init
     depends_on:
       - minio
     volumes:
       - $PWD/data:/tmp/data
-    entrypoint: >
+    entrypoint: |
       /bin/sh -c "
-      sleep 3;
-      /usr/bin/mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY;
-      /usr/bin/mc rm -r --force manage-my-prison/test-bucket;
-      /usr/bin/mc mb manage-my-prison/test-bucket;
-      /usr/bin/mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/;
-      exit 0;
+        until $$(curl --output /dev/null --silent http://minio:9000); do
+          echo 'Waiting for http://minio:9000'
+          sleep 3
+        done
+        mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY
+        mc rm -r --force manage-my-prison/test-bucket
+        mc mb manage-my-prison/test-bucket
+        mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/
+        exit 0
       "
 
   app:
     build: .
     networks:
       - hmpps
-    depends_on: [redis]
+    container_name: app
+    depends_on:
+      - redis
+      - hmpps-auth
+      - minio
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
+      - NODE_ENV=development
       - REDIS_HOST=redis
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
-      # These will need to match new creds in the seed auth service auth
-      - API_CLIENT_ID=client-id
-      - API_CLIENT_SECRET=client-secret
-      - SYSTEM_CLIENT_ID=system-client-id
-      - SYSTEM_CLIENT_SECRET=system-client-secret
+      - INGRESS_URL=http://localhost:3000
+      - TOKEN_VERIFICATION_API_URL=http://hmpps-auth:8080/verification
+      - SESSION_SECRET=app-insecure-default-session
+      - API_CLIENT_ID=manage-my-prison-client
+      - API_CLIENT_SECRET=clientsecret
+      - AWS_DEFAULT_REGION=eu-west-2
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET_NAME=test-bucket
+      - S3_ACCESS_KEY_ID=TEST_MINIO_ACCESS_KEY
+      - S3_SECRET_ACCESS_KEY=TEST_MINIO_SECRET_KEY
 
 networks:
   hmpps:
