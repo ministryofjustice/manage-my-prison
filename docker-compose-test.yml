@@ -25,7 +25,7 @@ services:
     command: server --console-address :9001 /data
     networks:
       - hmpps_int
-    container_name: aws-s3-mock
+    container_name: minio
     restart: always
     environment:
       - MINIO_REGION_NAME=eu-west-2
@@ -35,11 +35,11 @@ services:
       - "9000:9000"
       - "9001:9001"
 
-  createbuckets:
+  minio-init:
     image: minio/mc
     networks:
       - hmpps_int
-    container_name: aws-s3-mock-setup
+    container_name: minio-init
     depends_on:
       - minio
     volumes:
