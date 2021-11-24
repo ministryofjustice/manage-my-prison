@@ -44,14 +44,17 @@ services:
       - minio
     volumes:
       - $PWD/data:/tmp/data
-    entrypoint: >
+    entrypoint: |
       /bin/sh -c "
-      sleep 3;
-      /usr/bin/mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY;
-      /usr/bin/mc rm -r --force manage-my-prison/test-bucket;
-      /usr/bin/mc mb manage-my-prison/test-bucket;
-      /usr/bin/mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/;
-      exit 0;
+        until $$(curl --output /dev/null --silent http://minio:9000); do
+          echo 'Waiting for http://minio:9000'
+          sleep 3
+        done
+        mc config host add manage-my-prison http://minio:9000 TEST_MINIO_ACCESS_KEY TEST_MINIO_SECRET_KEY
+        mc rm -r --force manage-my-prison/test-bucket
+        mc mb manage-my-prison/test-bucket
+        mc mirror /tmp/data manage-my-prison/test-bucket/sandbox/
+        exit 0
       "
 
 networks:
