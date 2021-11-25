@@ -7,7 +7,7 @@ import {printTable} from '../../lib/table.js'
 
 export const {command, description, builder} = makeCommand(
   import.meta.url,
-  'Render helm chart',
+  'Check status of release',
 )
 
 export async function handler({environment, verbosity}: EnvironmentOptions): Promise<void> {

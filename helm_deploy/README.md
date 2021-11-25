@@ -1,69 +1,59 @@
-# Deployment Notes
+Manage my prison – Deployment
+=============================
 
-## Prerequisites
+This service is hosted on [Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/)
+and automatically deployed to the `dev` environment when commits are pushed to the main branch.
 
-- Ensure you have helm v3 client installed.
+At present, only the `dev` environment exists in kubernetes namespace
+[`manage-my-prison-dev`](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/manage-my-prison-dev).
 
-```sh
-$ helm version
-version.BuildInfo{Version:"v3.0.1", GitCommit:"7c22ef9ce89e0ebeb7125ba2ebf7d421f3e82ffa", GitTreeState:"clean", GoVersion:"go1.13.4"}
+Helm is used to manage the deployment of all relevant kubernetes resources
+and uses [HMPPS helm charts](https://ministryofjustice.github.io/hmpps-helm-charts/).
+
+## Components
+
+### Centrally managed by HMPPS Digital
+
+- HMPPS Auth – used to authenticate users
+- Quay.io – used to store docker images of the main application
+
+### Managed through Cloud Platform
+
+- AWS Elasticache Redis – used to store helper docker images
+- AWS ECR
+- AWS S3
+- AWS Athena
+
+### Managed by Helm using charts in this repository
+
+- Kubernetes deployments and services
+  - `manage-my-prison` – the main application
+  - `default-backend` – the default backend used to serve customised error messages
+- Kubernetes ingress for `manage-my-prison`
+- Kubernetes job to setup tables in Athena for `manage-my-prison`
+
+## Command line interface
+
+While the `helm` command can be used to interrogate and manage the application release,
+the easiest way to do it is by using the command shortcuts in "/infrastructure/cli";
+they also provide ways to manage AWS resources.
+
+Examples:
+
+```shell
+# view status of current releases
+./index.ts helm status [environment]
+
+# check whether the latest HMPPS helm charts are used
+./index.ts helm dependencies
+
+# debug rendered helm chart
+./index.ts helm template [environment]
+
+# plus many more…
 ```
 
-- Ensure a TLS cert for your intended hostname is configured and ready, see section below.
+If using `helm`, be sure to:
 
-### Useful helm (v3) commands:
-
-__Test chart template rendering:__
-
-This will out the fully rendered kubernetes resources in raw yaml.
-
-```sh
-helm template [path to chart] --values=values-dev.yaml
-```
-
-__List releases:__
-
-```sh
-helm --namespace [namespace] list
-```
-
-__List current and previously installed application versions:__
-
-```sh
-helm --namespace [namespace] history [release name]
-```
-
-__Rollback to previous version:__
-
-```sh
-helm --namespace [namespace] rollback [release name] [revision number] --wait
-```
-
-Note: replace _revision number_ with one from listed in the `history` command)
-
-__Example deploy command:__
-
-The following example is `--dry-run` mode - which will allow for testing. CircleCI normally runs this command with actual secret values (from AWS secret manager), and also updated the chart's application version to match the release version:
-
-```sh
-helm upgrade [release name] [path to chart]. \
-  --install --wait --force --reset-values --timeout 5m --history-max 10 \
-  --dry-run \
-  --namespace [namespace] \
-  --values values-dev.yaml \
-  --values example-secrets.yaml
-```
-
-### Ingress TLS certificate
-
-Ensure a certificate definition exists in the cloud-platform-environments repo under the relevant namespaces folder:
-
-e.g.
-
-```sh
-cloud-platform-environments/namespaces/live-1.cloud-platform.service.justice.gov.uk/[INSERT NAMESPACE NAME]/05-certificate.yaml
-```
-
-Ensure the certificate is created and ready for use.
-
-The name of the kubernetes secret where the certificate is stored is used as a value to the helm chart - this is used to configured the ingress.
+- use version 3
+- add HMPPS helm chart repo `helm repo add hmpps-helm-charts https://ministryofjustice.github.io/hmpps-helm-charts`
