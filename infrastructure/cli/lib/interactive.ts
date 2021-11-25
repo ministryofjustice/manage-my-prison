@@ -20,7 +20,7 @@ export async function confirm<T>(
   // TODO: once 'prod' is an option for Environment, change to:
   // if (proceedUnlessProduction !== undefined && proceedUnlessProduction !== 'prod') {
   if (proceedUnlessProduction === 'dev') {
-    process.stderr.write(`${question}\nAutomatically proceeding on non-production…\n`)
+    process.stderr.write(`${question}\n${chalk.yellow('Automatically proceeding on non-production…')}\n`)
     return callback()
   }
   const prompt = proceedByDefault ? chalk.green('Y/n') : chalk.red('y/N')

@@ -1,5 +1,5 @@
 import {helm, releaseName} from './index.js'
-import {namespace} from '../../lib/cluster.js'
+import {Environment, namespace} from '../../lib/cluster.js'
 import {makeCommand} from '../../lib/command.js'
 import {shortDateTime} from '../../lib/misc.js'
 import {EnvironmentOptions} from '../../lib/options.js'
@@ -20,19 +20,9 @@ type Release = {
 }
 
 export async function handler({environment}: EnvironmentOptions): Promise<void> {
-  const ns = namespace(environment)
-  const args = ['history', releaseName, '--namespace', ns, '--output', 'json']
-  const list = await helm(args, {output: 'object'}) as Release[]
-  const rows = list
-    .sort(({revision: revision1}, {revision: revision2}) => {
-      return revision2 - revision1
-    })
-    .map(item => {
-      const {revision, updated, status, app_version: appVersion, description} = item
-      // strip off time zone name from end
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      let updatedDate = /(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?(Z| [+-]\d{4})?)/.exec(updated)![0]
-      updatedDate = shortDateTime(updatedDate)
+  const rows = (await history(environment))
+    .map(({revision, updated, status, appVersion, description}) => {
+      const updatedDate = shortDateTime(updated)
       return {revision: String(revision), updated: updatedDate, status, appVersion, description}
     })
   printTable(rows, [
@@ -42,4 +32,28 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
     {name: 'Version', key: 'appVersion'},
     {name: 'Description', key: 'description'},
   ])
+}
+
+type History = {
+  revision: number
+  updated: Date
+  status: string
+  appVersion: string
+  description: string
+}[]
+
+export async function history(environment: Environment): Promise<History> {
+  const ns = namespace(environment)
+  const args = ['history', releaseName, '--namespace', ns, '--output', 'json']
+  const list = await helm(args, {output: 'object'}) as Release[]
+  return list
+    .sort(({revision: revision1}, {revision: revision2}) => {
+      return revision2 - revision1
+    })
+    .map(item => {
+      const {revision, updated, status, app_version: appVersion, description} = item
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const updatedDate = /(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?(Z| [+-]\d{4})?)/.exec(updated)![0]
+      return {revision, updated: new Date(updatedDate), status, appVersion, description}
+    })
 }

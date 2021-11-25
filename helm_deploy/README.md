@@ -47,6 +47,9 @@ Examples:
 # list past releases
 ./index.ts helm history [environment]
 
+# roll back to a past release
+./index.ts helm rollback [environment] -1
+
 # check whether the latest HMPPS helm charts are used
 ./index.ts helm dependencies
 
