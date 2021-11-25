@@ -44,13 +44,16 @@ Examples:
 # view status of current releases
 ./index.ts helm status [environment]
 
+# list past releases
+./index.ts helm history [environment]
+
 # check whether the latest HMPPS helm charts are used
 ./index.ts helm dependencies
 
 # debug rendered helm chart
 ./index.ts helm template [environment]
 
-# plus many more…
+# plus many more, see --help for more options
 ```
 
 If using `helm`, be sure to:
