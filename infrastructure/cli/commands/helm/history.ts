@@ -10,7 +10,10 @@ export const {command, description, builder} = makeCommand(
   'List history of releases',
 )
 
-type Release = {
+/**
+ * Type returned by `helm history` command
+ */
+type Revision = {
   revision: number
   updated: string
   status: string
@@ -34,21 +37,24 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
   ])
 }
 
-type History = {
+/**
+ * Parsed revision
+ */
+export type HistoryRevision = {
   revision: number
   updated: Date
   status: string
   appVersion: string
   description: string
-}[]
+}
 
-export async function history(environment: Environment): Promise<History> {
+export async function history(environment: Environment): Promise<HistoryRevision[]> {
   const ns = namespace(environment)
   const args = ['history', releaseName, '--namespace', ns, '--output', 'json']
-  const list = await helm(args, {output: 'object'}) as Release[]
+  const list = await helm(args, {output: 'object'}) as Revision[]
   return list
-    .sort(({revision: revision1}, {revision: revision2}) => {
-      return revision2 - revision1
+    .sort((revision1, revision2) => {
+      return revision2.revision - revision1.revision
     })
     .map(item => {
       const {revision, updated, status, app_version: appVersion, description} = item

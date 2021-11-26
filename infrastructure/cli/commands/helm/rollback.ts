@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 
 import {helm, releaseName} from './index.js'
-import {history} from './history.js'
+import {history, HistoryRevision} from './history.js'
 import {Environment, namespace} from '../../lib/cluster.js'
 import {makeCommand} from '../../lib/command.js'
 import {confirm} from '../../lib/interactive.js'
@@ -83,25 +83,24 @@ export async function handler({environment, revision, verbosity}: Options): Prom
   }
 }
 
-type HistoryItem = ReturnType<typeof history> extends Promise<(infer T)[]> ? T : never
-
-async function rollback(environment: Environment, release: HistoryItem, verbosity: Verbosity): Promise<void> {
-  process.stderr.write(
-    `Desired release is ${release.revision} (version: ${chalk.red(release.appVersion)})\n`
+async function rollback(environment: Environment, release: HistoryRevision, verbosity: Verbosity): Promise<void> {
+  process.stderr.write(`Desired release is ${release.revision} (version: ${chalk.red(release.appVersion)})\n`)
+  await confirm(
+    'Are you sure you want to change to this release?',
+    async () => {
+      const ns = namespace(environment)
+      const args = [
+        'rollback', releaseName,
+        '--namespace', ns,
+        String(release.revision),
+        '--wait', '--wait-for-jobs',
+        '--timeout', '10m',
+      ]
+      if (verbosity > Verbosity.normal) {
+        args.push('--debug')
+      }
+      await helm(args)
+    },
+    {proceedUnlessProduction: environment},
   )
-  const callback = async () => {
-    const ns = namespace(environment)
-    const args = [
-      'rollback', releaseName,
-      '--namespace', ns,
-      String(release.revision),
-      '--wait', '--wait-for-jobs',
-      '--timeout', '10m',
-    ]
-    if (verbosity > Verbosity.normal) {
-      args.push('--debug')
-    }
-    await helm(args)
-  }
-  await confirm('Are you sure you want to change to this release?', callback, {proceedUnlessProduction: environment})
 }

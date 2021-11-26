@@ -10,6 +10,9 @@ export const {command, description, builder} = makeCommand(
   'Check status of current release',
 )
 
+/**
+ * Type returned by `helm list` command
+ */
 type Release = {
   name: string
   namespace: string
@@ -34,8 +37,8 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
       updatedDate = shortDateTime(updatedDate)
       return {revision, updated: updatedDate, status, appVersion}
     })
-    .sort(({revision: revision1}, {revision: revision2}) => {
-      return parseInt(revision2, 10) - parseInt(revision1, 10)
+    .sort((revision1, revision2) => {
+      return parseInt(revision2.revision, 10) - parseInt(revision1.revision, 10)
     })
   printTable(rows, [
     {name: 'Updated', key: 'updated'},
