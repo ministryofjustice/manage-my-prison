@@ -1,29 +1,52 @@
 import chalk from 'chalk'
 
 type Row = {[key: string]: string | [string, number]}
-type Column = {name: string, key: string}
+type Column = {name: string; key: string}
 type ColumnInput = string | Column
 
 type TableOptions = {
   borders?: boolean
 }
 
+function coerceToString(value: any): string {
+  if (typeof value !== 'string') {
+    return String(value ?? '')
+  }
+  return value
+}
+
 function* table(
   rows: Row[],
   columns: ColumnInput[],
-  {borders = true}: TableOptions = {},
+  {borders = true}: TableOptions = {}
 ): Generator<string, void, void> {
-  const columnKeys: Column[] = columns.map(column => {
+  // force row values to be strings
+  for (const row of rows) {
+    for (const [key, item] of Object.entries(row)) {
+      if (Array.isArray(item)) {
+        const [value, width] = item
+        row[key] = [coerceToString(value), width]
+      } else {
+        row[key] = coerceToString(item)
+      }
+    }
+  }
+
+  // convert column definitions to long form
+  const columnKeys: Column[] = columns.map((column) => {
     if (typeof column === 'string') {
       return {name: column, key: column}
     }
     return column
   })
+
   const separator = borders ? ' │ ' : '  '
+
+  // calculate max width of each column
   const columnWidths = Object.fromEntries(
     columnKeys.map(({name, key}) => {
       const maxWidth = rows
-        .map(row => {
+        .map((row) => {
           const value = row[key]
           if (Array.isArray(value)) {
             const [, width] = value
@@ -36,13 +59,11 @@ function* table(
       return [key, maxWidth]
     })
   )
-  yield columnKeys
-    .map(({name, key}) => name.padEnd(columnWidths[key]))
-    .join(separator)
+
+  // yield padded/bordered columns and rows
+  yield columnKeys.map(({name, key}) => name.padEnd(columnWidths[key])).join(separator)
   if (borders) {
-    yield columnKeys
-      .map(({key}) => '─'.repeat(columnWidths[key]))
-      .join('─┼─')
+    yield columnKeys.map(({key}) => '─'.repeat(columnWidths[key])).join('─┼─')
   }
   for (const row of rows) {
     yield columnKeys
@@ -51,7 +72,7 @@ function* table(
         if (Array.isArray(value)) {
           // eslint-disable-next-line init-declarations
           let width
-          [value, width] = value
+          ;[value, width] = value
           return value + ' '.repeat(columnWidths[key] - width)
         } else {
           return value.padEnd(columnWidths[key])
@@ -77,7 +98,7 @@ export function printTable(rows: Row[], columns: ColumnInput[], {borders = true}
  */
 export function seemsSensitive(key: string): boolean {
   key = key.toLowerCase()
-  return ['secret', 'token', 'key', 'password'].some(word => key.includes(word))
+  return ['secret', 'token', 'key', 'password'].some((word) => key.includes(word))
 }
 
 type Styler = (s: string) => string

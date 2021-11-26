@@ -17,6 +17,7 @@ Requirements:
 
 - docker
 - node v16 to run the application in auto-restarting mode
+- helm v3 to manage application releases
 
 ### …fully in docker
 

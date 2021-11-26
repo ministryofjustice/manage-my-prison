@@ -5,8 +5,8 @@ import {appName} from './app.js'
 // kubernetes cluster details
 export const CONTEXT = 'live.cloud-platform.service.justice.gov.uk'
 
-export type Environment = 'dev'  // will become: 'dev' | 'prod'
-export const ENVIRONMENTS: Environment[] = ['dev']  // will become: ['dev', 'prod']
+export type Environment = 'dev'  // TODO: will become: 'dev' | 'prod'
+export const ENVIRONMENTS: Environment[] = ['dev']  // TODO: will become: ['dev', 'prod']
 
 export type Deployment = (typeof appName) | string
 export const DEPLOYMENT: Deployment = appName
