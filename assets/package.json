@@ -22,7 +22,7 @@
     "security-audit": "npx audit-ci --config ../audit-ci.json"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^1.0.0",
+    "@ministryofjustice/frontend": "^1.0.1",
     "jquery": "^3.6.0"
   },
   "devDependencies": {
