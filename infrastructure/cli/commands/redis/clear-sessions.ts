@@ -1,6 +1,4 @@
-import * as redis from 'redis'
-
-import {Client} from './index.js'
+import {Client, RedisClientType} from './index.js'
 import {Client as EcrClient} from '../ecr/index.js'
 import {namespace} from '../../lib/cluster.js'
 import {makeCommand} from '../../lib/command.js'
@@ -39,48 +37,23 @@ export async function handler({environment}: EnvironmentOptions): Promise<void> 
   )
 }
 
-const SCAN_ENDED = '0'
+async function clearSessions(redisClient: RedisClientType): Promise<void> {
+  process.stderr.write('Clearing sessions…\n')
+  let totalDeletedCount = 0
 
-async function clearSessions(redisClient: redis.RedisClient): Promise<void> {
-  return new Promise((resolve, reject) => {
-    redisClient.on('error', (err) => {
-      reject(err)
+  let cursor = 0
+  do {
+    const reply = await redisClient.scan(cursor, {
+      MATCH: 'sess:*',
+      COUNT: 50,
     })
+    cursor = reply.cursor
+    totalDeletedCount += await redisClient.del(reply.keys)
+  } while (cursor !== 0)
 
-    let totalDeletedCount = 0
-
-    function deleteNextBatch(cursor: string) {
-      redisClient.scan(
-        cursor,
-        'MATCH', 'sess:*',
-        'COUNT', '20',
-        (err, [cursor, keys]
-        ) => {
-          if (err) {
-            reject(err)
-          } else if (keys.length) {
-            redisClient.del(...keys, (err, deletedCount) => {
-              if (err) {
-                reject(err)
-              } else {
-                totalDeletedCount += deletedCount
-                if (cursor === SCAN_ENDED) {
-                  process.stderr.write(`Deleted ${totalDeletedCount} sessions\n`)
-                  resolve()
-                } else {
-                  deleteNextBatch(cursor)
-                }
-              }
-            })
-          } else {
-            process.stderr.write('No sessions to delete\n')
-            resolve()
-          }
-        }
-      )
-    }
-
-    process.stderr.write('Clearing sessions…\n')
-    deleteNextBatch(SCAN_ENDED)
-  })
+  if (totalDeletedCount) {
+    process.stderr.write(`Deleted ${totalDeletedCount} sessions\n`)
+  } else {
+    process.stderr.write('No sessions to delete\n')
+  }
 }

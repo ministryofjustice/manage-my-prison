@@ -1,11 +1,27 @@
 import chalk from 'chalk'
-import * as redis from 'redis'
+import {createClient} from 'redis'
 
 import {Environment, namespace} from '../../lib/cluster.js'
 import {KubernetesApi} from '../../lib/kubernetes.js'
 import {Port} from '../../lib/misc.js'
 
 export const description = 'Manage Elasticache Redis'
+
+function createLocalRedisClient(port: Port, password: string) {
+  return createClient({
+    url: `rediss://localhost:${port}`,
+    password,
+    socket: {
+      tls: true,
+      requestCert: false,
+      rejectUnauthorized: false,
+    },
+  })
+}
+
+// NB: this more-ergonomic versions does not work for some reason; related to default redis modules
+// export type RedisClientType = ReturnType<typeof createClient>
+export type RedisClientType = ReturnType<typeof createLocalRedisClient>
 
 export class Client {
   static secretName = 'elasticache-redis'
@@ -46,32 +62,18 @@ export class Client {
 
   async connectToRedisLocally(
     port: Port,
-    callback: (redisClient: redis.RedisClient) => void | Promise<void>,
+    callback: (redisClient: RedisClientType) => void | Promise<void>,
   ): Promise<void> {
-    const portNum = typeof port === 'string' ? parseInt(port, 10) : port
-    process.stderr.write(`Connecting to redis on local port ${portNum}…\n`)
-    const redisClient = redis.createClient({
-      password: this.authToken,
-      host: 'localhost',
-      port: portNum,
-      tls: {
-        requestCert: false,
-        rejectUnauthorized: false,
-      },
-    })
+    const redisClient = createLocalRedisClient(port, this.authToken)
+
+    process.stderr.write(`Connecting to redis on local port ${port}…\n`)
+    await redisClient.connect()
     const value = callback(redisClient)
     if (value && 'then' in value) {
       await value
     }
-    return new Promise((resolve, reject) => {
-      process.stderr.write('Redis quitting…\n')
-      redisClient.quit((err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
+
+    process.stderr.write('Redis quitting…\n')
+    await redisClient.quit()
   }
 }
