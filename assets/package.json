@@ -28,6 +28,6 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
     "@types/jquery": "^3.5.8",
-    "sass": "^1.43.4"
+    "sass": "^1.44.0"
   }
 }
