@@ -22,12 +22,12 @@
     "security-audit": "npx audit-ci --config ../audit-ci.json"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^1.0.0",
+    "@ministryofjustice/frontend": "^1.0.1",
     "jquery": "^3.6.0"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
-    "@types/jquery": "^3.5.8",
+    "@types/jquery": "^3.5.9",
     "sass": "^1.44.0"
   }
 }
