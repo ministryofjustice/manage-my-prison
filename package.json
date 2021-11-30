@@ -98,8 +98,8 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-athena": "^3.42.0",
-    "@aws-sdk/client-s3": "^3.42.0",
+    "@aws-sdk/client-athena": "^3.43.0",
+    "@aws-sdk/client-s3": "^3.43.0",
     "@sentry/node": "^6.15.0",
     "agentkeepalive": "^4.1.4",
     "applicationinsights": "^2.1.9",
@@ -128,7 +128,7 @@
     "redis": "^3.1.2",
     "superagent": "^6.1.0",
     "vega": "^5.21.0",
-    "vega-embed": "^6.20.2",
+    "vega-embed": "^6.20.5",
     "vega-lite": "^5.1.1",
     "yargs": "^17.2.1"
   },
@@ -155,7 +155,7 @@
     "@types/supertest": "^2.0.11",
     "@types/yargs": "^17.0.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "concurrently": "^6.4.0",
     "cypress": "^9.0.0",
     "cypress-multi-reporters": "^1.5.0",
@@ -167,7 +167,7 @@
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
-    "jest": "^27.4.1",
+    "jest": "^27.4.2",
     "jest-html-reporter": "^3.4.1",
     "jest-junit": "^13.0.0",
     "jsonwebtoken": "^8.5.1",
