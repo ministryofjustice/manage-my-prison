@@ -3,7 +3,7 @@ import express from 'express'
 import path from 'path'
 import createError from 'http-errors'
 
-import indexRoutes from './routes'
+import allRoutes from './routes'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import standardRouter from './routes/standardRouter'
@@ -35,7 +35,7 @@ export default function createApp(userService: UserService): express.Application
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware())
 
-  app.use('/', indexRoutes(standardRouter(userService)))
+  app.use('/', allRoutes(standardRouter(userService)))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   setUpSentryErrorHandler(app)
