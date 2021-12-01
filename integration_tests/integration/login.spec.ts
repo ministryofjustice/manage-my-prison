@@ -36,4 +36,16 @@ context('SignIn', () => {
     indexPage.manageDetails().click()
     Page.verifyOnPage(AuthManageDetailsPage)
   })
+
+  it('Well-known security URL is accessible without login', () => {
+    cy.request({
+      url: '/.well-known/security.txt',
+      followRedirect: false,
+    })
+      .its('redirectedToUrl')
+      .should(
+        'equal',
+        'https://raw.githubusercontent.com/ministryofjustice/security-guidance/main/contact/vulnerability-disclosure-security.txt'
+      )
+  })
 })
