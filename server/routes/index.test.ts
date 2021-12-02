@@ -89,3 +89,16 @@ describe('GET /athena-sample', () => {
       })
   })
 })
+
+describe('GET well-known security URL', () => {
+  it('redirects to MoJ security guidance', () => {
+    return request(app)
+      .get('/.well-known/security.txt')
+      .redirects(0)
+      .expect(302)
+      .expect(
+        'Location',
+        'https://raw.githubusercontent.com/ministryofjustice/security-guidance/main/contact/vulnerability-disclosure-security.txt'
+      )
+  })
+})

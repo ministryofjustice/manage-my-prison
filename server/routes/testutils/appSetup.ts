@@ -9,6 +9,8 @@ import errorHandler from '../../errorHandler'
 import standardRouter from '../standardRouter'
 import UserService from '../../services/userService'
 import * as auth from '../../authentication/auth'
+import setUpWebRequestParsing from '../../middleware/setupRequestParsing'
+import setUpWebSecurity from '../../middleware/setUpWebSecurity'
 
 const user = {
   name: 'john smith',
@@ -44,9 +46,9 @@ function appSetup(route: Router, production: boolean): Express {
     next()
   })
 
+  app.use(setUpWebSecurity())
   app.use(cookieSession({ keys: [''] }))
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+  app.use(setUpWebRequestParsing())
   app.use('/', route)
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(production))

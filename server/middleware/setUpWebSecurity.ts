@@ -37,5 +37,13 @@ export default function setUpWebSecurity(): Router {
       },
     })
   )
+
+  // Cf. https://security-guidance.service.justice.gov.uk/implement-security-txt/
+  router.get('/.well-known/security.txt', async (req, res) =>
+    res.redirect(
+      'https://raw.githubusercontent.com/ministryofjustice/security-guidance/main/contact/vulnerability-disclosure-security.txt'
+    )
+  )
+
   return router
 }
