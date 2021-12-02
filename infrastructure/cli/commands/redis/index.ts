@@ -68,10 +68,9 @@ export class Client {
 
     process.stderr.write(`Connecting to redis on local port ${port}…\n`)
     await redisClient.connect()
-    const value = callback(redisClient)
-    if (value && 'then' in value) {
-      await value
-    }
+
+    // use redis connection in callback
+    await callback(redisClient)
 
     process.stderr.write('Redis quitting…\n')
     await redisClient.quit()

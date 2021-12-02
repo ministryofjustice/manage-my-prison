@@ -452,10 +452,7 @@ export class KubernetesApi {
       })
       server.listen(localPortNum, 'localhost', async () => {
         if (readyCallback) {
-          const value = readyCallback()
-          if (value && 'then' in value) {
-            await value
-          }
+          await readyCallback()
         }
       })
       await once(server, 'close')
