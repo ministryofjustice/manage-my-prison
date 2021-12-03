@@ -6,7 +6,7 @@ declare module 'govuk-frontend' {
 
   // NB: not a real class, but indicates common interface
   declare class Component {
-    constructor($module: Element)
+    constructor($module: HTMLElement)
 
     init(): void
   }

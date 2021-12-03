@@ -12,26 +12,29 @@ export default function setUpStaticResources(): Router {
 
   //  Static Resources Configuration
   const cacheControl = { maxAge: config.staticResourceCacheDuration * 1000 }
-  ;['/assets/images', '/assets/js', '/assets/stylesheets'].forEach(dir => {
+
+  const appStaticPaths = ['/assets/images', '/assets/js', '/assets/stylesheets']
+  appStaticPaths.forEach(dir => {
     router.use(dir, express.static(path.join(process.cwd(), dir), cacheControl))
   })
-  ;[
+
+  const vendorStaticPaths = [
     '/node_modules/govuk-frontend/govuk/assets',
-    '/node_modules/govuk-frontend',
     '/node_modules/@ministryofjustice/frontend/moj/assets',
-    '/node_modules/@ministryofjustice/frontend',
-  ].forEach(dir => {
+  ]
+  vendorStaticPaths.forEach(dir => {
     router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
   })
-  ;[
+
+  const individualRoutes = [
     ['/assets/images/favicon.ico', '/favicon.ico'],
-    ['/node_modules/jquery/dist/jquery.min.js', '/assets/js/jquery.min.js'],
     ['/node_modules/vega/build/vega.min.js', '/assets/js/vega.min.js'],
     ['/node_modules/vega-lite/build/vega-lite.min.js', '/assets/js/vega-lite.min.js'],
     ['/node_modules/vega-embed/build/vega-embed.min.js', '/assets/js/vega-embed.min.js'],
     // Serve data used by interactive visualisation example
     ['/data/seattle-weather.csv', '/data/seattle-weather.csv'],
-  ].forEach(mapping => {
+  ]
+  individualRoutes.forEach(mapping => {
     const [filePath, urlPath] = mapping
     router.use(urlPath, express.static(path.join(process.cwd(), filePath), cacheControl))
   })

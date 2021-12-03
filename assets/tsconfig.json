@@ -13,6 +13,7 @@
   "exclude": [
     "node_modules",
     "js",
+    "build.ts",
   ],
   "include": ["**/*.ts"]
 }
