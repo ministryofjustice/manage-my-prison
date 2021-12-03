@@ -1,19 +1,24 @@
-import redis from 'redis'
-import session from 'express-session'
 import connectRedis from 'connect-redis'
-import addRequestId from 'express-request-id'
 import express, { Router } from 'express'
+import addRequestId from 'express-request-id'
+import session from 'express-session'
+import { createClient } from 'redis'
 
 import config from '../config'
 
 const RedisStore = connectRedis(session)
 
-const client = redis.createClient({
-  port: config.redis.port,
+const redisURL =
+  config.redis.tls_enabled === 'true'
+    ? `rediss://${config.redis.host}:${config.redis.port}`
+    : `redis://${config.redis.host}:${config.redis.port}`
+
+const client = createClient({
+  url: redisURL,
   password: config.redis.password,
-  host: config.redis.host,
-  tls: config.redis.tls_enabled === 'true' ? {} : false,
+  legacyMode: true,
 })
+client.connect()
 
 export default function setUpWebSession(): Router {
   const router = express.Router()

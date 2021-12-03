@@ -36,7 +36,7 @@
     "node-fetch": "^3",
     "nunjucks": "^3",
     "prettier": "^2",
-    "redis": "^3",
+    "redis": "^4",
     "semver": "^7",
     "ts-node": "^10",
     "typescript": "^4",

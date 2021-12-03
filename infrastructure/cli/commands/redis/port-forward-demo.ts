@@ -11,7 +11,8 @@ export const {command, description, builder} = makeCommand(
     requiredPositionals: [
       {
         name: 'language',
-        choices: ['node-redis', 'node-redis-next', 'python'],
+        choices: ['node-redis-3', 'node-redis-4', 'python'],
+        default: 'node-redis-4',
         description: 'The language for which to show a demo local connection script',
       },
     ],
@@ -22,11 +23,15 @@ export const {command, description, builder} = makeCommand(
 const passwordPlaceholder = '???password???'
 
 interface Options extends EnvironmentOptions {
-  language: 'node-redis' | 'node-redis-next' | 'python'
+  language: 'node-redis-3' | 'node-redis-4' | 'python'
   port: Port
 }
 
-export async function handler({environment, language, port = portConfig.default}: Options): Promise<void> {
+export async function handler({
+  environment,
+  language = 'node-redis-4',
+  port = portConfig.default,
+}: Options): Promise<void> {
   const client = await Client.load(environment)
   process.stderr.write(
     'First, port-forward Elasticache Redis to a local port using the `redis port-forward` command.\n' +
@@ -36,10 +41,10 @@ export async function handler({environment, language, port = portConfig.default}
     'Now connect locally with this script…\n\n'
   )
   switch (language) {
-    case 'node-redis':
-      return demoNodeRedis(port)
-    case 'node-redis-next':
-      return demoNodeRedisNext(port)
+    case 'node-redis-3':
+      return demoNodeRedis3(port)
+    case 'node-redis-4':
+      return demoNodeRedis4(port)
     case 'python':
       return demoPython(port)
     default:
@@ -47,7 +52,7 @@ export async function handler({environment, language, port = portConfig.default}
   }
 }
 
-function demoNodeRedis(port: Port) {
+function demoNodeRedis3(port: Port) {
   // for redis ^3
   process.stdout.write(`
 const redis = require('redis')
@@ -66,7 +71,7 @@ client.keys('*', redis.print)
 `.trim() + '\n')
 }
 
-function demoNodeRedisNext(port: Port) {
+function demoNodeRedis4(port: Port) {
   // for redis ^4
   process.stdout.write(`
 import {createClient} from 'redis'
@@ -75,6 +80,7 @@ import {createClient} from 'redis'
     url: 'rediss://localhost:${port}',
     password: '${passwordPlaceholder}',
     socket: {
+      tls: true,
       requestCert: false,
       rejectUnauthorized: false,
     },
@@ -83,7 +89,7 @@ import {createClient} from 'redis'
   await client.connect()
   console.dir(await client.ping())
   console.dir(await client.keys('*'))
-  await client.disconnect()
+  await client.quit()
 })()
 `.trim() + '\n')
 }

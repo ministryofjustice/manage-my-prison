@@ -7,10 +7,7 @@ export async function trapInterruptSignal<T>(execute: () => T | Promise<T>, trap
   let value: T | Promise<T> | null = null
   try {
     process.on('SIGINT', trap)
-    value = execute()
-    if ('then' in value) {
-      value = await value
-    }
+    value = await execute()
   } finally {
     process.off('SIGINT', trap)
   }
