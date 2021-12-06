@@ -166,7 +166,7 @@
     "eslint-plugin-import": "2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
-    "jest": "^27.4.2",
+    "jest": "^27.4.3",
     "jest-html-reporter": "^3.4.1",
     "jest-junit": "^13.0.0",
     "jsonwebtoken": "^8.5.1",
