@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run compile-sass && tsc",
 
-    "compile-sass": "sass --no-source-map --load-path=node_modules/govuk-frontend --load-path=node_modules/@ministryofjustice/frontend --load-path=../node_modules/govuk-frontend --load-path=../node_modules/@ministryofjustice/frontend ./sass/application.scss:./stylesheets/application.css --style compressed",
+    "compile-sass": "sass --no-source-map --load-path=.. --load-path=../node_modules/govuk-frontend --load-path=../node_modules/@ministryofjustice/frontend ./sass/application.scss:./stylesheets/application.css --style compressed",
     "watch-sass": "npm run compile-sass -- --watch",
 
     "lint": "eslint . --cache --max-warnings 0",
@@ -22,12 +22,12 @@
     "security-audit": "npx audit-ci --config ../audit-ci.json"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^1.0.1",
+    "@ministryofjustice/frontend": "^1.2.0",
     "jquery": "^3.6.0"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
-    "@types/jquery": "^3.5.9",
-    "sass": "^1.44.0"
+    "@types/jquery": "^3.5.13",
+    "sass": "^1.49.7"
   }
 }

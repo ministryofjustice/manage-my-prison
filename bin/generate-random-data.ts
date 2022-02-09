@@ -2,7 +2,7 @@
 import { writeFileSync } from 'fs'
 import { exit } from 'process'
 
-import faker from 'faker'
+import faker from '@faker-js/faker'
 import moment from 'moment'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'

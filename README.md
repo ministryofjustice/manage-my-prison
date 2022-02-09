@@ -1,6 +1,8 @@
 Manage my prison
 ================
 
+**Not currently being developed**
+
 This typescript-based service will provide prison staff with insights and charts to help them manage their residents.
 It will not provide a consumable api to other services.
 
