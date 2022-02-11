@@ -5,7 +5,7 @@ services:
     image: 'bitnami/redis:5.0'
     networks:
       - hmpps
-    container_name: redis
+    container_name: mmp-redis
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
@@ -15,7 +15,7 @@ services:
     image: quay.io/hmpps/nomis-user-roles-api:latest
     networks:
       - hmpps
-    container_name: nomis-user-roles-api
+    container_name: mmp-nomis-roles
     ports:
       - '8102:8080'
     healthcheck:
@@ -29,7 +29,7 @@ services:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
-    container_name: hmpps-auth
+    container_name: mmp-hmpps-auth
     depends_on: [nomis-user-roles-api]
     ports:
       - '9090:8080'
@@ -45,7 +45,7 @@ services:
     command: server --console-address :9001 /data
     networks:
       - hmpps
-    container_name: minio
+    container_name: mmp-minio
     restart: always
     environment:
       - MINIO_REGION_NAME=eu-west-2
@@ -59,7 +59,7 @@ services:
     image: minio/mc
     networks:
       - hmpps
-    container_name: minio-init
+    container_name: mmp-minio-init
     depends_on:
       - minio
     volumes:
@@ -81,7 +81,7 @@ services:
     build: .
     networks:
       - hmpps
-    container_name: app
+    container_name: mmp
     depends_on:
       - redis
       - hmpps-auth
