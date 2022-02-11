@@ -11,18 +11,34 @@ services:
     ports:
       - '6379:6379'
 
+  nomis-user-roles-api:
+    image: quay.io/hmpps/nomis-user-roles-api:latest
+    networks:
+      - hmpps
+    container_name: nomis-user-roles-api
+    ports:
+      - '8102:8080'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health/ping']
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=dev
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8080/auth
+
   hmpps-auth:
     image: quay.io/hmpps/hmpps-auth:latest
     networks:
       - hmpps
     container_name: hmpps-auth
+    depends_on: [nomis-user-roles-api]
     ports:
       - '9090:8080'
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:8080/auth/health']
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=dev,nomis
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8080
 
   minio:
     image: minio/minio
