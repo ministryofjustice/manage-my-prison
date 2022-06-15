@@ -3,14 +3,14 @@ import cookieSession from 'cookie-session'
 import createError from 'http-errors'
 import path from 'path'
 
-import allRoutes from '../index'
-import nunjucksSetup from '../../utils/nunjucksSetup'
-import errorHandler from '../../errorHandler'
-import standardRouter from '../standardRouter'
-import UserService from '../../services/userService'
-import * as auth from '../../authentication/auth'
-import setUpWebRequestParsing from '../../middleware/setupRequestParsing'
-import setUpWebSecurity from '../../middleware/setUpWebSecurity'
+import allRoutes from '../index.js'
+import nunjucksSetup from '../../utils/nunjucksSetup.js'
+import errorHandler from '../../errorHandler.js'
+import standardRouter from '../standardRouter.js'
+import UserService from '../../services/userService.js'
+import * as auth from '../../authentication/auth.js'
+import setUpWebRequestParsing from '../../middleware/setupRequestParsing.js'
+import setUpWebSecurity from '../../middleware/setUpWebSecurity.js'
 
 const user = {
   name: 'john smith',

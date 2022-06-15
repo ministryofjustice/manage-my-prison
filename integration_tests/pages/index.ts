@@ -1,4 +1,4 @@
-import Page, { PageElement } from './page'
+import Page, { PageElement } from './page.js'
 
 export default class IndexPage extends Page {
   constructor() {

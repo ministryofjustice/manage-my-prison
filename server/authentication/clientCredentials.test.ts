@@ -1,4 +1,4 @@
-import generateOauthClientToken from './clientCredentials'
+import generateOauthClientToken from './clientCredentials.js'
 
 describe('generateOauthClientToken', () => {
   it('Token can be generated', () => {

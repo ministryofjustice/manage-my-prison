@@ -31,12 +31,13 @@
     "lint": "eslint . --cache --max-warnings 0 && npm run -ws lint",
     "npm-check-updates": "npx npm-check-updates --doctor --upgrade && npm run -ws npm-check-updates",
     "typecheck": "tsc --noEmit && tsc -p integration_tests --noEmit && npm run -ws typecheck",
-    "test": "jest --detectOpenHandles",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles",
     "security_audit": "npx audit-ci --config audit-ci.json && npm run -ws security-audit",
     "int-test": "cypress run --config video=false",
     "int-test-ui": "cypress open",
     "clean": "rm -rf node_modules dist && npm run -ws clean"
   },
+  "type": "module",
   "engines": {
     "node": "^16.13",
     "npm": "^8.1"
@@ -46,7 +47,15 @@
     "infrastructure/cli"
   ],
   "jest": {
-    "preset": "ts-jest",
+    "preset": "ts-jest/presets/js-with-ts-esm",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "globals": {
+      "ts-jest": {
+        "useESM": true
+      }
+    },
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}"
     ],
@@ -68,13 +77,6 @@
           "outputPath": "test_results/unit-test-reports.html"
         }
       ]
-    ],
-    "moduleFileExtensions": [
-      "web.js",
-      "js",
-      "json",
-      "node",
-      "ts"
     ]
   },
   "nodemonConfig": {

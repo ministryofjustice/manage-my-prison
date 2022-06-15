@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
-import logger from '../../logger'
-import UserService from '../services/userService'
+
+import logger from '../../logger.js'
+import UserService from '../services/userService.js'
 
 export default function populateCurrentUser(userService: UserService): RequestHandler {
   return async (req, res, next) => {

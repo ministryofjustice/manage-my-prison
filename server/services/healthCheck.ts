@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs'
 
-import { serviceCheckFactory } from '../data/healthCheck'
-import config from '../config'
-import type { AgentConfig } from '../config'
+import { serviceCheckFactory } from '../data/healthCheck.js'
+import config from '../config.js'
+import type { AgentConfig } from '../config.js'
 
 interface HealthCheckStatus {
   name: string

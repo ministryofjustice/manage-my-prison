@@ -1,8 +1,8 @@
 import type { GetQueryExecutionOutput, GetQueryResultsOutput, StartQueryExecutionOutput } from '@aws-sdk/client-athena'
 import { QueryExecutionState as ExecutionState } from '@aws-sdk/client-athena'
 
-import AthenaClient, { AthenaConfig } from './athenaClient'
-import { S3BucketConfig } from './s3Client'
+import AthenaClient, { AthenaConfig } from './athenaClient.js'
+import { S3BucketConfig } from './s3Client.js'
 
 const bucketConfig = { bucket: 'bucket1' } as S3BucketConfig
 const athenaConfig = {

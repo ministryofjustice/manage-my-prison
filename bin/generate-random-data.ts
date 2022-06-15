@@ -7,9 +7,9 @@ import moment from 'moment'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
-import config from '../server/config'
-import logger from '../logger'
-import S3Client from '../server/data/s3Client'
+import config from '../server/config.js'
+import logger from '../logger.js'
+import S3Client from '../server/data/s3Client.js'
 
 interface Options {
   rows: number

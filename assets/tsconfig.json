@@ -4,7 +4,7 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es5", "dom"],
-    "module": "commonjs",
+    "module": "es2022",
     "outDir": "./js/",
     "sourceMap": false,
     "allowJs": false,

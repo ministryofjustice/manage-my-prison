@@ -1,11 +1,11 @@
 import superagent from 'superagent'
 import querystring from 'querystring'
-import type TokenStore from './tokenStore'
 
-import logger from '../../logger'
-import config from '../config'
-import generateOauthClientToken from '../authentication/clientCredentials'
-import RestClient from './restClient'
+import type TokenStore from './tokenStore.js'
+import logger from '../../logger.js'
+import config from '../config.js'
+import generateOauthClientToken from '../authentication/clientCredentials.js'
+import RestClient from './restClient.js'
 
 const timeoutSpec = config.apis.hmppsAuth.timeout
 const hmppsAuthUrl = config.apis.hmppsAuth.url

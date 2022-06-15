@@ -3,9 +3,9 @@ import { SelectObjectContentCommandInput } from '@aws-sdk/client-s3'
 import * as vega from 'vega'
 import * as vegaLite from 'vega-lite'
 
-import config from '../config'
-import AthenaClient from '../data/athenaClient'
-import S3Client from '../data/s3Client'
+import config from '../config.js'
+import AthenaClient from '../data/athenaClient.js'
+import S3Client from '../data/s3Client.js'
 
 const positiveBehaviourColour = '#48659E'
 const negativeBehaviourColour = '#9FB3DD'

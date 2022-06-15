@@ -1,8 +1,8 @@
 import nock from 'nock'
 
-import RestClient from './restClient'
-import { AgentConfig } from '../config'
-import { overrideLoggerAsync } from '../../logger'
+import RestClient from './restClient.js'
+import { AgentConfig } from '../config.js'
+import { overrideLoggerAsync } from '../../logger.js'
 
 describe('restClient', () => {
   const fakeApiUrl = 'http://localhost:8000/test'

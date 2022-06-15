@@ -1,4 +1,4 @@
-import convertToTitleCase from './utils'
+import convertToTitleCase from './utils.js'
 
 describe('Convert to title case', () => {
   it('null string', () => {

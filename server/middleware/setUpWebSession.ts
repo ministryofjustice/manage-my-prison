@@ -4,7 +4,7 @@ import addRequestId from 'express-request-id'
 import session from 'express-session'
 import { createClient } from 'redis'
 
-import config from '../config'
+import config from '../config.js'
 
 const RedisStore = connectRedis(session)
 

@@ -1,8 +1,8 @@
 import express from 'express'
 import * as Sentry from '@sentry/node'
 
-import config from '../config'
-import applicationVersion from '../applicationVersion'
+import config from '../config.js'
+import applicationVersion from '../applicationVersion.js'
 
 export function setUpSentryRequestHandler(app: express.Express): void {
   if (config.sentry.dsn) {

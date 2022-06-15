@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
-import applicationVersion from '../applicationVersion'
+
+import applicationVersion from '../applicationVersion.js'
 
 function defaultName(): string {
   const {

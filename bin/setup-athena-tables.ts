@@ -4,10 +4,10 @@ import * as path from 'path'
 
 import 'dotenv/config'
 
-import logger from '../logger'
-import config from '../server/config'
-import AthenaClient from '../server/data/athenaClient'
-import S3Client from '../server/data/s3Client'
+import logger from '../logger.js'
+import config from '../server/config.js'
+import AthenaClient from '../server/data/athenaClient.js'
+import S3Client from '../server/data/s3Client.js'
 
 const table = 'sample'
 const sampleCsvPath = path.resolve(process.cwd(), 'data', 'seattle-weather.csv')

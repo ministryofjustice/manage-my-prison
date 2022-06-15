@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken'
 import type { Request, Response } from 'express'
 
-import authorisationMiddleware from './authorisationMiddleware'
-import { overrideLoggerSync } from '../../logger'
+import authorisationMiddleware from './authorisationMiddleware.js'
+import { overrideLoggerSync } from '../../logger.js'
 
 function createToken(authorities: string[]) {
   const payload = {

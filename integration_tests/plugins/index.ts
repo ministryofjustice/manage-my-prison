@@ -1,7 +1,7 @@
-import { resetStubs } from '../mockApis/wiremock'
+import { resetStubs } from '../mockApis/wiremock.js'
 
-import auth from '../mockApis/auth'
-import tokenVerification from '../mockApis/tokenVerification'
+import auth from '../mockApis/auth.js'
+import tokenVerification from '../mockApis/tokenVerification.js'
 
 export default (on: (string, Record) => void): void => {
   on('task', {
