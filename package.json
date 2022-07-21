@@ -125,7 +125,7 @@
     "nunjucks": "^3.2.3",
     "passport": "^0.5.2",
     "passport-oauth2": "^1.6.1",
-    "redis": "^4.0.3",
+    "redis": "^4.2.0",
     "superagent": "^7.1.1",
     "vega": "^5.21.0",
     "vega-embed": "^6.20.5",
